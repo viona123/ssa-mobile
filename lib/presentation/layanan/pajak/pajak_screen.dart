@@ -785,7 +785,7 @@ class _PajakScreenState extends State<PajakScreen> {
                 Icons.home_rounded,
                 'Beranda',
                 false,
-                () => Navigator.pop(context),
+                () => Navigator.popUntil(context, (route) => route.isFirst),
               ),
             ),
             Expanded(

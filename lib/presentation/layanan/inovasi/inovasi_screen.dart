@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../agenda/agenda_screen.dart';
+import '../../bantuan/bantuan_screen.dart';
 import 'inovasi_detail_model.dart';
 import 'inovasi_detail_screen.dart';
 
@@ -545,59 +546,102 @@ class _InovasiScreenState extends State<InovasiScreen> {
       backgroundColor: _bg,
       bottomNavigationBar: _buildNavBar(context),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(context),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Search + refresh
-                    _buildSearchRow(),
-                    const SizedBox(height: 16),
+            Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Search + refresh
+                        _buildSearchRow(),
+                        const SizedBox(height: 16),
 
-                    // Filter dropdowns
-                    _buildFilters(),
-                    const SizedBox(height: 24),
+                        // Filter dropdowns
+                        _buildFilters(),
+                        const SizedBox(height: 24),
 
-                    // Daftar Inovasi header
-                    const Text(
-                      'Daftar Inovasi',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: _darkText,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Kartu inovasi
-                    if (_filtered.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        child: Center(
-                          child: Text(
-                            'Inovasi tidak ditemukan.',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: _greyText,
-                            ),
+                        // Daftar Inovasi header
+                        const Text(
+                          'Daftar Inovasi',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: _darkText,
                           ),
                         ),
-                      )
-                    else ...[
-                      ..._pageItems.map(_buildInovasiCard),
-                      const SizedBox(height: 12),
-                      _buildPagination(),
-                    ],
-                  ],
+                        const SizedBox(height: 16),
+
+                        // Kartu inovasi
+                        if (_filtered.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            child: Center(
+                              child: Text(
+                                'Inovasi tidak ditemukan.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: _greyText,
+                                ),
+                              ),
+                            ),
+                          )
+                        else ...[
+                          ..._pageItems.map(_buildInovasiCard),
+                          const SizedBox(height: 12),
+                          _buildPagination(),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
+
+            // Tombol Pusat Bantuan
+            Positioned(right: 26, bottom: 14, child: _buildHelpButton()),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // PUSAT BANTUAN
+  // ============================================================
+  Widget _buildHelpButton() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BantuanScreen()),
+        ),
+        child: Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            color: _appBlue,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.support_agent_rounded,
+            size: 27,
+            color: Colors.white,
+          ),
         ),
       ),
     );

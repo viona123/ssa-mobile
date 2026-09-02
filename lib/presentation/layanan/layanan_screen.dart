@@ -1,28 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../agenda/agenda_screen.dart';
-import 'geospasial/geospasial_screen.dart';
-import 'inovasi/inovasi_screen.dart';
-import 'kegawatdaruratan/kegawatdaruratan_screen.dart';
-import 'poli_rsud/poli_rsud_screen.dart';
-import 'puskesmas/puskesmas_screen.dart';
-import 'ketenagakerjaan/ketenagakerjaan_screen.dart';
-import 'sewa_gedung/sewa_gedung_screen.dart';
-import 'kemiskinan/kemiskinan_screen.dart';
-import 'keuangan/keuangan_screen.dart';
-import 'perdagangan/perdagangan_screen.dart';
-import 'pajak/pajak_screen.dart';
-import 'bus_sekolah/bus_sekolah_screen.dart';
-import 'pariwisata/pariwisata_screen.dart';
-import 'pengaduan/pengaduan_screen.dart';
-import 'pendidikan/pendidikan_screen.dart';
-import 'layanan_mpp/layanan_mpp_screen.dart';
+import 'service_catalog.dart';
 
 class LayananScreen extends StatefulWidget {
   final bool showBottomNav;
+  final bool showAllServices;
 
-  const LayananScreen({super.key, this.showBottomNav = true});
+  const LayananScreen({
+    super.key,
+    this.showBottomNav = true,
+    this.showAllServices = false,
+  });
 
   @override
   State<LayananScreen> createState() => _LayananScreenState();
@@ -46,249 +35,20 @@ class _LayananScreenState extends State<LayananScreen> {
   final Set<int> _expandedIndices = {};
 
   // ============================================================
-  // DATA KATEGORI
+  // DATA KATEGORI — dari katalog bersama (service_catalog.dart)
   // ============================================================
-  final List<ServiceCategory> _categories = [
-    ServiceCategory(
-      title: 'DPMPTSP Kabupaten Sragen',
-      subtitle: 'Portal utama, perizinan, pengaduan, SKM...',
-      icon: Icons.account_balance_rounded,
-      iconColor: const Color(0xFF315579),
-      iconBackground: const Color(0xFFE8F0F7),
-      services: [
-        ServiceItem(
-          title: 'Website DPMPTSP',
-          subtitle: 'DPMPTSP Kabupaten Sragen',
-          icon: Icons.language_rounded,
-          iconBackground: Color(0xFF315579),
-          url: 'https://dpmptsp.sragenkab.go.id/portal/',
-        ),
-        ServiceItem(
-          title: 'SIPONER',
-          subtitle: 'Sistem Perizinan Online Sragen',
-          icon: Icons.gavel_rounded,
-          iconBackground: Color(0xFF1779B8),
-          url: 'https://sipioner.sragenkab.go.id/index',
-        ),
-        ServiceItem(
-          title: 'SKM Online',
-          subtitle: 'Survei Kepuasan Masyarakat',
-          icon: Icons.rate_review_rounded,
-          iconBackground: Color(0xFF2E9E6B),
-          url: 'https://dpmptsp.sragenkab.go.id/skm',
-        ),
-        ServiceItem(
-          title: 'SIAP',
-          subtitle: 'Sistem Informasi Administrasi Perizinan',
-          icon: Icons.assignment_rounded,
-          iconBackground: Color(0xFFA26B16),
-          url: 'https://dpmptsp.sragenkab.go.id/pengaduan',
-        ),
-        ServiceItem(
-          title: 'SIPELANGI',
-          subtitle: 'Sistem Pelayanan Langsung Jadi',
-          icon: Icons.flash_on_rounded,
-          iconBackground: Color(0xFF7B2D8B),
-          url: 'https://sipelangi.sragenkab.go.id/',
-        ),
-        ServiceItem(
-          title: 'PASTIOL',
-          subtitle: 'Pelayanan Administrasi Satu Pintu Online',
-          icon: Icons.verified_rounded,
-          iconBackground: Color(0xFF278CA9),
-          url: 'https://pastiol.sragenkab.go.id/beranda',
-        ),
-      ],
-    ),
-    ServiceCategory(
-      title: 'Mal Pelayanan Publik',
-      subtitle: 'Website MPP dan antrean online',
-      icon: Icons.business_rounded,
-      iconColor: const Color(0xFF315579),
-      iconBackground: const Color(0xFFE8F0F7),
-      services: [
-        ServiceItem(
-          title: 'Website MPP',
-          subtitle: 'Mal Pelayanan Publik Sragen',
-          icon: Icons.web_rounded,
-          iconBackground: Color(0xFF315579),
-          url: 'https://mpp.sragenkab.go.id/web/',
-        ),
-        ServiceItem(
-          title: 'Antrean Online',
-          subtitle: 'Ambil nomor antrean online',
-          icon: Icons.event_available_rounded,
-          iconBackground: Color(0xFF1779B8),
-          url: 'https://mpp.sragenkab.go.id/antrian/',
-        ),
-      ],
-    ),
-    ServiceCategory(
-      title: 'Kesehatan & Keselamatan',
-      subtitle: 'Layanan darurat medis dan informasi kes...',
-      icon: Icons.local_hospital_rounded,
-      iconColor: const Color(0xFFD92D2D),
-      iconBackground: const Color(0xFFFDE8E8),
-      services: [
-        ServiceItem(
-          title: 'Kegawatdaruratan',
-          subtitle: 'Layanan Darurat Kabupaten Sragen',
-          icon: Icons.emergency_rounded,
-          iconBackground: Color(0xFFD92D2D),
-          url: '',
-        ),
-        ServiceItem(
-          title: 'Layanan Poli RSUD',
-          subtitle: 'RSUD Kabupaten Sragen',
-          icon: Icons.medical_services_rounded,
-          iconBackground: Color(0xFF2E9E6B),
-          url: '',
-        ),
-        ServiceItem(
-          title: 'Layanan Puskesmas',
-          subtitle: 'Dinas Kesehatan Kabupaten Sragen',
-          icon: Icons.add_box_rounded,
-          iconBackground: Color(0xFF1B8A5A),
-          url: '',
-        ),
-      ],
-    ),
-    ServiceCategory(
-      title: 'Kependudukan & Sosial',
-      subtitle: 'Layanan administrasi kependudukan dan ...',
-      icon: Icons.people_rounded,
-      iconColor: const Color(0xFFA26B16),
-      iconBackground: const Color(0xFFFFF3E0),
-      services: [
-        ServiceItem(
-          title: 'Layanan Kependudukan',
-          subtitle: 'Disdukcapil Kabupaten Sragen',
-          icon: Icons.badge_rounded,
-          iconBackground: Color(0xFFA26B16),
-          url: 'https://pandu-online.sragenkab.go.id/signin.html',
-        ),
-        ServiceItem(
-          title: 'Data Kemiskinan',
-          subtitle: 'Dinas Sosial Kabupaten Sragen',
-          icon: Icons.insert_chart_rounded,
-          iconBackground: Color(0xFF315579),
-          url: '',
-        ),
-      ],
-    ),
-    ServiceCategory(
-      title: 'Ekonomi, Keuangan & Pajak',
-      subtitle: 'Pajak daerah, harga pasar, dan keuangan',
-      icon: Icons.account_balance_wallet_rounded,
-      iconColor: const Color(0xFF2E9E6B),
-      iconBackground: const Color(0xFFE6F7EF),
-      services: [
-        ServiceItem(
-          title: 'Keuangan',
-          subtitle: 'BPKAD Kabupaten Sragen',
-          icon: Icons.payments_rounded,
-          iconBackground: Color(0xFF2E9E6B),
-          url: '',
-        ),
-        ServiceItem(
-          title: 'Perdagangan',
-          subtitle: 'Dinas Perdagangan Kabupaten Sragen',
-          icon: Icons.storefront_rounded,
-          iconBackground: Color(0xFFA26B16),
-          url: '',
-        ),
-        ServiceItem(
-          title: 'Pajak',
-          subtitle: 'Bapenda Kabupaten Sragen',
-          icon: Icons.receipt_long_rounded,
-          iconBackground: Color(0xFF315579),
-          url: '',
-        ),
-        ServiceItem(
-          title: 'Layanan Ketenagakerjaan',
-          subtitle: 'Disnaker Kabupaten Sragen',
-          icon: Icons.work_rounded,
-          iconBackground: Color(0xFF007EA7),
-          url: '',
-        ),
-      ],
-    ),
-    ServiceCategory(
-      title: 'Pendidikan & Transportasi',
-      subtitle: 'Layanan operasional bus sekolah dan pen...',
-      icon: Icons.school_rounded,
-      iconColor: const Color(0xFF1779B8),
-      iconBackground: const Color(0xFFE3F2FD),
-      services: [
-        ServiceItem(
-          title: 'Bus Sekolah',
-          subtitle: 'Dinas Perhubungan Kabupaten Sragen',
-          icon: Icons.directions_bus_rounded,
-          iconBackground: Color(0xFF1779B8),
-          url: '',
-        ),
-      ],
-    ),
-    ServiceCategory(
-      title: 'Pariwisata & Budaya',
-      subtitle: 'Destinasi wisata, agenda budaya, dan eko...',
-      icon: Icons.explore_rounded,
-      iconColor: const Color(0xFF7B2D8B),
-      iconBackground: const Color(0xFFF3E5F5),
-      services: [
-        ServiceItem(
-          title: 'Pariwisata',
-          subtitle: 'Disporapar Kabupaten Sragen',
-          icon: Icons.terrain_rounded,
-          iconBackground: Color(0xFF7B2D8B),
-          url: '',
-        ),
-      ],
-    ),
-    ServiceCategory(
-      title: 'Tata Kelola & Inovasi',
-      subtitle: 'Inovasi daerah, portal geospatial, dan kan...',
-      icon: Icons.hub_rounded,
-      iconColor: const Color(0xFFA26B16),
-      iconBackground: const Color(0xFFFFF8E1),
-      services: [
-        ServiceItem(
-          title: 'Inovasi',
-          subtitle: 'Bapperida Kabupaten Sragen',
-          icon: Icons.lightbulb_rounded,
-          iconBackground: Color(0xFFA26B16),
-          url: '',
-        ),
-        ServiceItem(
-          title: 'Pengaduan',
-          subtitle: 'Pemerintah Kabupaten Sragen',
-          icon: Icons.campaign_rounded,
-          iconBackground: Color(0xFFD92D2D),
-          url: '',
-        ),
-        ServiceItem(
-          title: 'Geospasial',
-          subtitle: 'Diskominfo Kabupaten Sragen',
-          icon: Icons.map_rounded,
-          iconBackground: Color(0xFF2E9E6B),
-          url: '',
-        ),
-        ServiceItem(
-          title: 'Sewa Gedung / Area Terbuka',
-          subtitle: 'Disperkimtaru Kabupaten Sragen',
-          icon: Icons.domain_rounded,
-          iconBackground: Color(0xFF0E4C7A),
-          url: '',
-        ),
-      ],
-    ),
-  ];
+  final List<ServiceCategory> _categories = ServiceCatalog.categories;
+
 
   // ============================================================
   // BUILD
   // ============================================================
   @override
   Widget build(BuildContext context) {
+    if (widget.showAllServices) {
+      return _buildAllServicesSheet();
+    }
+
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -362,6 +122,142 @@ class _LayananScreenState extends State<LayananScreen> {
       backgroundColor: _pageBackground,
       bottomNavigationBar: _buildBottomNavigation(),
       body: SafeArea(child: content),
+    );
+  }
+
+  // ============================================================
+  // SEMUA LAYANAN — MODE FLAT UNTUK BOTTOM SHEET HOME
+  // ============================================================
+  Widget _buildAllServicesSheet() {
+    final allServices = _categories
+        .expand((category) => category.services)
+        .toList(growable: false);
+
+    return Material(
+      color: Colors.white,
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            Container(
+              width: 42,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFDDE2E8),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 10, 12),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Semua Layanan',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: _darkText,
+                          ),
+                        ),
+                        SizedBox(height: 3),
+                        Text(
+                          'Pilih layanan yang ingin dibuka.',
+                          style: TextStyle(fontSize: 11, color: _greyText),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEAF7FC),
+                      borderRadius: BorderRadius.circular(11),
+                    ),
+                    child: Text(
+                      '${allServices.length} layanan',
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: _primaryBlue,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Tutup',
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close_rounded, color: _greyText),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1, color: Color(0xFFE8EDF2)),
+            Expanded(
+              child: GridView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                itemCount: allServices.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 11,
+                  mainAxisSpacing: 14,
+                  mainAxisExtent: 102,
+                ),
+                itemBuilder: (context, index) {
+                  return _buildCompactServiceItem(allServices[index]);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactServiceItem(ServiceItem service) {
+    return GestureDetector(
+      onTap: () => _onServiceTap(service),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE5E9EE),
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: Icon(service.icon, size: 27, color: _darkBlue),
+          ),
+          const SizedBox(height: 5),
+          SizedBox(
+            height: 32,
+            child: Text(
+              // Pecah kata panjang tertentu agar terbagi 2 baris dengan rapi,
+              // bukan "Kegawatdarurat" lalu "an" sendirian di bawah.
+              service.title == 'Kegawatdaruratan'
+                  ? 'Kegawat\ndaruratan'
+                  : service.title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 9,
+                height: 1.1,
+                color: _darkText,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -666,87 +562,14 @@ class _LayananScreenState extends State<LayananScreen> {
   }
 
   // ============================================================
-  // SERVICE TAP HANDLER
+  // SERVICE TAP HANDLER — delegasi ke katalog bersama
   // ============================================================
   void _onServiceTap(ServiceItem service) {
-    // Layanan dengan halaman internal khusus
-    final Widget? screen = _internalScreenFor(service.title);
-    if (screen != null) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
-      return;
-    }
-
-    if (service.url.isNotEmpty) {
-      _openExternalUrl(Uri.parse(service.url));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Layanan ${service.title} akan segera hadir.'),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
-  }
-
-  /// Mengembalikan halaman internal untuk sebuah layanan, atau null bila
-  /// layanan tersebut dibuka via URL / belum tersedia.
-  Widget? _internalScreenFor(String title) {
-    switch (title) {
-      case 'Geospasial':
-        return const GeospasialScreen();
-      case 'Inovasi':
-        return const InovasiScreen();
-      case 'Kegawatdaruratan':
-        return const KegawatdaruratanScreen();
-      case 'Layanan Poli RSUD':
-        return const PoliRsudScreen();
-      case 'Layanan Puskesmas':
-        return const PuskesmasScreen();
-      case 'Layanan Ketenagakerjaan':
-        return const KetenagakerjaanScreen();
-      case 'Sewa Gedung / Area Terbuka':
-        return const SewaGedungScreen();
-      case 'Data Kemiskinan':
-        return const KemiskinanScreen();
-      case 'Keuangan':
-        return const KeuanganScreen();
-      case 'Perdagangan':
-        return const PerdaganganScreen();
-      case 'Pajak':
-        return const PajakScreen();
-      case 'Bus Sekolah':
-        return const BusSekolahScreen();
-      case 'Pariwisata':
-        return const PariwisataScreen();
-      case 'Pengaduan':
-        return const PengaduanScreen();
-      case 'Pendidikan':
-        return const PendidikanScreen();
-      case 'Layanan MPP':
-        return const LayananMppScreen();
-      default:
-        return null;
-    }
-  }
-
-  // ============================================================
-  // OPEN EXTERNAL URL
-  // ============================================================
-  Future<void> _openExternalUrl(Uri uri) async {
-    final bool launched = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
+    ServiceCatalog.openService(
+      context,
+      service,
+      fromSheet: widget.showAllServices,
     );
-
-    if (!launched && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Tidak dapat membuka tautan layanan.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
   }
 
   // ============================================================
@@ -776,7 +599,8 @@ class _LayananScreenState extends State<LayananScreen> {
                 activeIcon: Icons.home_rounded,
                 label: 'Beranda',
                 active: false,
-                onTap: () => Navigator.pop(context),
+                onTap: () =>
+                    Navigator.popUntil(context, (route) => route.isFirst),
               ),
             ),
             Expanded(
@@ -798,7 +622,7 @@ class _LayananScreenState extends State<LayananScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const AgendaScreen(showBottomNav: false),
+                      builder: (_) => const AgendaScreen(),
                     ),
                   );
                 },
@@ -854,41 +678,4 @@ class _LayananScreenState extends State<LayananScreen> {
       ),
     );
   }
-}
-
-// ============================================================
-// MODEL CLASSES
-// ============================================================
-class ServiceCategory {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBackground;
-  final List<ServiceItem> services;
-
-  const ServiceCategory({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.iconColor,
-    required this.iconBackground,
-    required this.services,
-  });
-}
-
-class ServiceItem {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color iconBackground;
-  final String url;
-
-  const ServiceItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.iconBackground,
-    required this.url,
-  });
 }

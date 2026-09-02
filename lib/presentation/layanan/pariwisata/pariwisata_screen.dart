@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../agenda/agenda_screen.dart';
+import '../../bantuan/bantuan_screen.dart';
 import 'reservasi_screen.dart';
 
 class PariwisataScreen extends StatefulWidget {
@@ -30,6 +31,7 @@ class _PariwisataScreenState extends State<PariwisataScreen> {
       deskripsi:
           'Obyek wisata religi dan ziarah dengan pemandangan alam asri di sekitar Waduk...',
       lokasi: 'Soko, Kec. Sumberlawang, Sragen',
+      diskon: 'Diskon Pelajar 50%',
       harga: [
         HargaTiket(kategori: 'Hari Biasa', harga: 'Rp 5.000'),
         HargaTiket(kategori: 'Hari Libur', harga: 'Rp 6.000'),
@@ -80,11 +82,54 @@ class _PariwisataScreenState extends State<PariwisataScreen> {
       backgroundColor: pageBackground,
       bottomNavigationBar: _buildBottomNavigation(),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(context),
-            Expanded(child: _buildBody()),
+            Column(
+              children: [
+                _buildHeader(context),
+                Expanded(child: _buildBody()),
+              ],
+            ),
+
+            // Tombol Pusat Bantuan
+            Positioned(right: 26, bottom: 14, child: _buildHelpButton()),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // PUSAT BANTUAN
+  // ============================================================
+  Widget _buildHelpButton() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BantuanScreen()),
+        ),
+        child: Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            color: primaryBlue,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.support_agent_rounded,
+            size: 27,
+            color: Colors.white,
+          ),
         ),
       ),
     );
@@ -139,11 +184,6 @@ class _PariwisataScreenState extends State<PariwisataScreen> {
         children: [
           const SizedBox(height: 16),
 
-          // Search Bar
-          _buildSearchBar(),
-
-          const SizedBox(height: 20),
-
           // Header E-Ticket
           _buildETicketHeader(),
 
@@ -151,11 +191,6 @@ class _PariwisataScreenState extends State<PariwisataScreen> {
 
           // Stepper
           _buildStepper(),
-
-          const SizedBox(height: 16),
-
-          // Diskon Banner
-          _buildDiskonBanner(),
 
           const SizedBox(height: 20),
 
@@ -169,66 +204,104 @@ class _PariwisataScreenState extends State<PariwisataScreen> {
   }
 
   // ============================================================
-  // SEARCH BAR
-  // ============================================================
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE0E0E0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: const Row(
-          children: [
-            SizedBox(width: 14),
-            Icon(Icons.search, size: 22, color: greyText),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'Cari destinasi wisata...',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: greyText,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ============================================================
   // E-TICKET HEADER
   // ============================================================
   Widget _buildETicketHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            'E-Ticket Wisata Sragen',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: darkText,
+          // Badge kecil di atas judul
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF00B4D8), Color(0xFF007EA7)],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryBlue.withValues(alpha: 0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.confirmation_number_rounded,
+                    size: 15, color: Colors.white),
+                SizedBox(width: 6),
+                Text(
+                  'TIKET WISATA ONLINE',
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 12),
+          // Judul dengan gradient
+          ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [Color(0xFF007EA7), Color(0xFF00B4D8), Color(0xFF58D8EC)],
+            ).createShader(bounds),
+            child: const Text(
+              'E-Ticket Wisata Sragen',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 0.3,
+                height: 1.15,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Garis dekoratif di tengah
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 26,
+                height: 3,
+                decoration: BoxDecoration(
+                  color: lightBlue,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: primaryBlue,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                width: 26,
+                height: 3,
+                decoration: BoxDecoration(
+                  color: lightBlue,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Subjudul
           Text(
             'Layanan Pembelian Tiket Wisata Online Kabupaten Sragen',
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
               color: greyText.withValues(alpha: 0.9),
@@ -242,104 +315,81 @@ class _PariwisataScreenState extends State<PariwisataScreen> {
 
   // ============================================================
   // STEPPER (Pilih Destinasi > Isi Data > Konfirmasi > Pembayaran)
+  // Gaya seragam dengan halaman Konfirmasi (ikon + garis biru).
   // ============================================================
   Widget _buildStepper() {
-    final steps = ['Pilih Destinasi', 'Isi Data', 'Konfirmasi', 'Pembayaran'];
+    final steps = [
+      _StepInfo(
+          label: 'Pilih Destinasi',
+          icon: Icons.location_on,
+          isCompleted: false,
+          isActive: true),
+      _StepInfo(label: 'Isi Data', icon: Icons.edit_note, isCompleted: false),
+      _StepInfo(
+          label: 'Konfirmasi',
+          icon: Icons.description_outlined,
+          isCompleted: false),
+      _StepInfo(
+          label: 'Pembayaran',
+          icon: Icons.payment_outlined,
+          isCompleted: false),
+    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        children: List.generate(steps.length, (index) {
-          final bool isActive = index == 0;
-          return Expanded(
-            child: Row(
-              children: [
-                if (index > 0)
-                  Expanded(
-                    child: Container(
-                      height: 2,
-                      color: const Color(0xFFE0E0E0),
-                    ),
-                  ),
-                Column(
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isActive ? primaryBlue : Colors.white,
-                        border: Border.all(
-                          color: isActive ? primaryBlue : const Color(0xFFE0E0E0),
-                          width: 2,
-                        ),
-                      ),
-                      child: Center(
-                        child: isActive
-                            ? const Icon(Icons.circle, size: 10, color: Colors.white)
-                            : Icon(Icons.circle,
-                                size: 8, color: const Color(0xFFE0E0E0)),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      steps[index],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 9,
-                        fontWeight:
-                            isActive ? FontWeight.w600 : FontWeight.w400,
-                        color: isActive ? primaryBlue : greyText,
-                      ),
-                    ),
-                  ],
-                ),
-                if (index < steps.length - 1)
-                  Expanded(
-                    child: Container(
-                      height: 2,
-                      color: const Color(0xFFE0E0E0),
-                    ),
-                  ),
-              ],
-            ),
-          );
+        children: List.generate(steps.length * 2 - 1, (index) {
+          if (index.isOdd) {
+            final int stepBefore = index ~/ 2;
+            final bool isCompletedLine = steps[stepBefore].isCompleted;
+            return Expanded(
+              child: Container(
+                height: 3,
+                color:
+                    isCompletedLine ? primaryBlue : const Color(0xFFE0E0E0),
+              ),
+            );
+          }
+          return _buildStepIcon(steps[index ~/ 2]);
         }),
       ),
     );
   }
 
-  // ============================================================
-  // DISKON BANNER
-  // ============================================================
-  Widget _buildDiskonBanner() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+  Widget _buildStepIcon(_StepInfo step) {
+    final bool filled = step.isCompleted || step.isActive;
+    return Column(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
-            color: const Color(0xFF00B4D8),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF00B4D8).withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            shape: BoxShape.circle,
+            color: filled ? primaryBlue : Colors.white,
+            border: Border.all(
+              color: filled ? primaryBlue : const Color(0xFFBDBDBD),
+              width: 2,
+            ),
           ),
-          child: const Text(
-            'Diskon Pelajar 50% • Gunung Kemukus',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+          child: Center(
+            child: Icon(
+              step.icon,
+              size: 18,
+              color: filled ? Colors.white : const Color(0xFFBDBDBD),
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 6),
+        Text(
+          step.label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: filled ? FontWeight.w600 : FontWeight.w400,
+            color: filled ? primaryBlue : greyText,
+          ),
+        ),
+      ],
     );
   }
 
@@ -450,23 +500,67 @@ class _PariwisataScreenState extends State<PariwisataScreen> {
   // WISATA IMAGE
   // ============================================================
   Widget _buildWisataImage(WisataItem wisata) {
-    return Container(
-      height: 180,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF76C3D4), Color(0xFF3B94A9)],
+    return Stack(
+      children: [
+        Container(
+          height: 180,
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF76C3D4), Color(0xFF3B94A9)],
+            ),
+          ),
+          child: const Center(
+            child: Icon(
+              Icons.landscape_rounded,
+              size: 60,
+              color: Colors.white70,
+            ),
+          ),
         ),
-      ),
-      child: const Center(
-        child: Icon(
-          Icons.landscape_rounded,
-          size: 60,
-          color: Colors.white70,
-        ),
-      ),
+        // Badge diskon di depan gambar
+        if (wisata.diskon != null)
+          Positioned(
+            top: 12,
+            left: 12,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF6B6B), Color(0xFFEE5253)],
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.local_offer_rounded,
+                      size: 14, color: Colors.white),
+                  const SizedBox(width: 6),
+                  Text(
+                    wisata.diskon!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -662,6 +756,7 @@ class WisataItem {
   final String deskripsi;
   final String lokasi;
   final List<HargaTiket> harga;
+  final String? diskon;
 
   const WisataItem({
     required this.nama,
@@ -669,6 +764,7 @@ class WisataItem {
     required this.deskripsi,
     required this.lokasi,
     required this.harga,
+    this.diskon,
   });
 }
 
@@ -679,5 +775,22 @@ class HargaTiket {
   const HargaTiket({
     required this.kategori,
     required this.harga,
+  });
+}
+
+// ================================================================
+// STEP INFO MODEL
+// ================================================================
+class _StepInfo {
+  final String label;
+  final IconData icon;
+  final bool isCompleted;
+  final bool isActive;
+
+  const _StepInfo({
+    required this.label,
+    required this.icon,
+    required this.isCompleted,
+    this.isActive = false,
   });
 }

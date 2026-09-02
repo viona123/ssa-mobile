@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../agenda/agenda_screen.dart';
+import '../../bantuan/bantuan_screen.dart';
+
 /// Layanan Geospasial Sragen (sesuai desain context/geo1.png).
 ///
 /// Menampilkan toggle Maps/Dataset, peta interaktif (placeholder), serta
@@ -79,33 +82,76 @@ class _GeospasialScreenState extends State<GeospasialScreen> {
       backgroundColor: _pageBackground,
       bottomNavigationBar: _buildBottomNavigation(),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(context),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Toggle Maps / Dataset
-                    _buildTabToggle(),
+            Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Toggle Maps / Dataset
+                        _buildTabToggle(),
 
-                    const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                    // Konten sesuai tab
-                    if (_selectedTab == 0) ...[
-                      _buildMapView(),
-                      const SizedBox(height: 20),
-                      _buildLayerSection(),
-                    ] else
-                      _buildDatasetView(),
-                  ],
+                        // Konten sesuai tab
+                        if (_selectedTab == 0) ...[
+                          _buildMapView(),
+                          const SizedBox(height: 20),
+                          _buildLayerSection(),
+                        ] else
+                          _buildDatasetView(),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
+
+            // Tombol Pusat Bantuan
+            Positioned(right: 26, bottom: 14, child: _buildHelpButton()),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // PUSAT BANTUAN
+  // ============================================================
+  Widget _buildHelpButton() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BantuanScreen()),
+        ),
+        child: Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            color: _primaryBlue,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.support_agent_rounded,
+            size: 27,
+            color: Colors.white,
+          ),
         ),
       ),
     );
@@ -882,7 +928,12 @@ class _GeospasialScreenState extends State<GeospasialScreen> {
                 icon: Icons.calendar_month_outlined,
                 label: 'Agenda',
                 active: false,
-                onTap: () {},
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AgendaScreen(),
+                  ),
+                ),
               ),
             ),
           ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'layanan_screen.dart';
+import 'service_catalog.dart';
 
 class LayananDetailScreen extends StatelessWidget {
   final ServiceCategory category;

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../agenda/agenda_screen.dart';
 import 'jadwal_dokter_screen.dart';
+import 'info_kamar_screen.dart';
+import 'reservasi_poli_screen.dart';
+import 'cek_batal_screen.dart';
 
 // ================================================================
 // POLI RSUD DETAIL - SETELAH PILIH RUMAH SAKIT
@@ -256,40 +259,85 @@ class PoliRsudDetailScreen extends StatelessWidget {
   }
 
   // ============================================================
-  // LAYANAN GRID (2x2)
+  // DATA SUKOWATI
+  // ============================================================
+  static const List<KamarInfo> _kamarSukowati = [
+    KamarInfo('ANGGREK', 'Kelas 1', 2, 0),
+    KamarInfo('HCU', 'Kelas Utama', 2, 1),
+    KamarInfo('Isolasi', 'Kelas Utama', 6, 0),
+    KamarInfo('Kamar ICU', 'Kelas Utama', 5, 0),
+    KamarInfo('Kamar Kelas I', 'Kelas 1', 7, 2),
+    KamarInfo('Kamar Kelas II', 'Kelas 2', 12, 6),
+    KamarInfo('Kamar Kelas III', 'Kelas 3', 26, 17),
+    KamarInfo('Kamar Kelas VIP', 'Kelas VVIP', 1, 0),
+    KamarInfo('Kamar NICU', 'Kelas Utama', 1, 0),
+    KamarInfo('Kamar PICU', 'Kelas Utama', 1, 0),
+    KamarInfo('Perina', 'Kelas Utama', 2, 0),
+  ];
+
+  static const List<InfoKamarItem> _infoSukowati = [
+    InfoKamarItem(Icons.info_rounded,
+        'Menampilkan jadwal praktek dokter dan ketersediaan kamar rawat inap RSUD Sukowati Tangen.'),
+    InfoKamarItem(Icons.update_rounded,
+        'Data diperbarui secara real-time dari sistem informasi rumah sakit.'),
+    InfoKamarItem(Icons.phone_in_talk_outlined,
+        'Hubungi RSUD Tangen untuk informasi reservasi dan pendaftaran pasien baru.'),
+  ];
+
+  // ============================================================
+  // LAYANAN GRID (2x2 atau 1x2)
   // ============================================================
 
   Widget _buildLayananGrid(BuildContext context) {
-    final List<_LayananItem> layananList = [
-      _LayananItem(
-        title: 'Pendaftaran',
-        subtitle: 'Reservasi online cepat & mudah',
-        icon: Icons.medical_services_outlined,
-        iconBgColor: const Color(0xFFE8F5F1),
-        iconColor: primaryGreen,
-      ),
-      _LayananItem(
-        title: 'Jadwal',
-        subtitle: 'Cek jam praktik dokter spesialis',
-        icon: Icons.calendar_view_month_rounded,
-        iconBgColor: const Color(0xFFE8F5F1),
-        iconColor: primaryGreen,
-      ),
-      _LayananItem(
-        title: 'Info Kamar',
-        subtitle: 'Pantau ranap secara real-time',
-        icon: Icons.meeting_room_outlined,
-        iconBgColor: const Color(0xFFFFF3E8),
-        iconColor: const Color(0xFFD4770B),
-      ),
-      _LayananItem(
-        title: 'Riwayat',
-        subtitle: 'Kelola tiket & batal kunjungan',
-        icon: Icons.history_rounded,
-        iconBgColor: const Color(0xFFE8F5F1),
-        iconColor: primaryGreen,
-      ),
-    ];
+    final bool isSukowati = hospitalName.contains('Sukowati');
+
+    final List<_LayananItem> layananList = isSukowati
+        ? [
+            _LayananItem(
+              title: 'Jadwal',
+              subtitle: 'Cek jam praktik dokter spesialis',
+              icon: Icons.calendar_view_month_rounded,
+              iconBgColor: const Color(0xFFE8F5F1),
+              iconColor: primaryGreen,
+            ),
+            _LayananItem(
+              title: 'Info Kamar',
+              subtitle: 'Pantau ranap secara real-time',
+              icon: Icons.meeting_room_outlined,
+              iconBgColor: const Color(0xFFFFF3E8),
+              iconColor: const Color(0xFFD4770B),
+            ),
+          ]
+        : [
+            _LayananItem(
+              title: 'Buat Reservasi',
+              subtitle: 'Reservasi online cepat & mudah',
+              icon: Icons.medical_services_outlined,
+              iconBgColor: const Color(0xFFE8F5F1),
+              iconColor: primaryGreen,
+            ),
+            _LayananItem(
+              title: 'Jadwal',
+              subtitle: 'Cek jam praktik dokter spesialis',
+              icon: Icons.calendar_view_month_rounded,
+              iconBgColor: const Color(0xFFE8F5F1),
+              iconColor: primaryGreen,
+            ),
+            _LayananItem(
+              title: 'Info Kamar',
+              subtitle: 'Pantau ranap secara real-time',
+              icon: Icons.meeting_room_outlined,
+              iconBgColor: const Color(0xFFFFF3E8),
+              iconColor: const Color(0xFFD4770B),
+            ),
+            _LayananItem(
+              title: 'Cek/Batal Reservasi',
+              subtitle: 'Kelola tiket & batal kunjungan',
+              icon: Icons.history_rounded,
+              iconBgColor: const Color(0xFFE8F5F1),
+              iconColor: primaryGreen,
+            ),
+          ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -301,12 +349,32 @@ class PoliRsudDetailScreen extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 14,
           mainAxisSpacing: 14,
-          mainAxisExtent: 165,
+          mainAxisExtent: 175,
         ),
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              if (layananList[index].title == 'Jadwal') {
+              if (layananList[index].title == 'Buat Reservasi') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ReservasiPoliScreen(
+                      hospitalName: hospitalName,
+                      hospitalLocation: hospitalLocation,
+                    ),
+                  ),
+                );
+              } else if (layananList[index].title == 'Cek/Batal Reservasi') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CekBatalScreen(
+                      hospitalName: hospitalName,
+                      hospitalLocation: hospitalLocation,
+                    ),
+                  ),
+                );
+              } else if (layananList[index].title == 'Jadwal') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -314,6 +382,24 @@ class PoliRsudDetailScreen extends StatelessWidget {
                       hospitalName: hospitalName,
                       hospitalLocation: hospitalLocation,
                     ),
+                  ),
+                );
+              } else if (layananList[index].title == 'Info Kamar') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => isSukowati
+                        ? InfoKamarScreen(
+                            hospitalName: hospitalName,
+                            hospitalLocation: hospitalLocation,
+                            showRingkasan: true,
+                            kamarList: _kamarSukowati,
+                            infoItems: _infoSukowati,
+                          )
+                        : InfoKamarScreen(
+                            hospitalName: hospitalName,
+                            hospitalLocation: hospitalLocation,
+                          ),
                   ),
                 );
               }
@@ -363,6 +449,8 @@ class PoliRsudDetailScreen extends StatelessWidget {
           // TITLE
           Text(
             item.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -373,14 +461,16 @@ class PoliRsudDetailScreen extends StatelessWidget {
           const SizedBox(height: 4),
 
           // SUBTITLE
-          Text(
-            item.subtitle,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 12,
-              color: greyText,
-              height: 1.3,
+          Flexible(
+            child: Text(
+              item.subtitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                color: greyText,
+                height: 1.3,
+              ),
             ),
           ),
         ],

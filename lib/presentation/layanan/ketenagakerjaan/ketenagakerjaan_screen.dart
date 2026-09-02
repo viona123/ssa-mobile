@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../agenda/agenda_screen.dart';
+import '../../bantuan/bantuan_screen.dart';
 import 'ketenagakerjaan_data.dart';
 import 'ketenagakerjaan_detail_screen.dart';
 
@@ -46,26 +47,69 @@ class _KetenagakerjaanScreenState extends State<KetenagakerjaanScreen> {
       backgroundColor: _bg,
       bottomNavigationBar: _buildBottomNavigation(),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHero(),
-                    const SizedBox(height: 16),
-                    _buildSearchPanel(),
-                    const SizedBox(height: 16),
-                    ..._buildCards(),
-                  ],
+            Column(
+              children: [
+                _buildHeader(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 28),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHero(),
+                        const SizedBox(height: 16),
+                        _buildSearchPanel(),
+                        const SizedBox(height: 16),
+                        ..._buildCards(),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
+
+            // Tombol Pusat Bantuan
+            Positioned(right: 26, bottom: 14, child: _buildHelpButton()),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // PUSAT BANTUAN
+  // ============================================================
+  Widget _buildHelpButton() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BantuanScreen()),
+        ),
+        child: Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            color: _appBlue,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.support_agent_rounded,
+            size: 27,
+            color: Colors.white,
+          ),
         ),
       ),
     );
@@ -529,7 +573,7 @@ class _KetenagakerjaanScreenState extends State<KetenagakerjaanScreen> {
           children: [
             Expanded(
               child: _navItem(Icons.home_outlined, Icons.home_rounded,
-                  'Beranda', false, () => Navigator.pop(context)),
+                  'Beranda', false, () => Navigator.popUntil(context, (route) => route.isFirst)),
             ),
             Expanded(
               child: _navItem(Icons.grid_view_rounded, Icons.grid_view_rounded,

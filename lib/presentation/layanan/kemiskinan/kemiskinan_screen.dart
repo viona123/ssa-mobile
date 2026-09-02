@@ -909,7 +909,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                 Icons.home_rounded,
                 'Beranda',
                 false,
-                () => Navigator.pop(context),
+                () => Navigator.popUntil(context, (route) => route.isFirst),
               ),
             ),
             Expanded(

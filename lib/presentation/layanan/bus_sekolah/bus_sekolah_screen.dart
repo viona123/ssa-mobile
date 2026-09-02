@@ -1114,7 +1114,7 @@ class _BusSekolahScreenState extends State<BusSekolahScreen>
                 activeIcon: Icons.home_rounded,
                 label:      'Beranda',
                 active:     false,
-                onTap:      () => Navigator.pop(context),
+                onTap:      () => Navigator.popUntil(context, (route) => route.isFirst),
               ),
             ),
             // Layanan — aktif

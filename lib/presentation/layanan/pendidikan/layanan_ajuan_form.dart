@@ -16,6 +16,7 @@ class LayananInfo {
   final List<LayananBullet> bullets;
   final String tanggal;
   final List<BerkasItem> berkas;
+  final List<SyaratGroup> syarat;
 
   const LayananInfo({
     required this.nama,
@@ -23,6 +24,27 @@ class LayananInfo {
     this.bullets = const [],
     this.tanggal = '2022-12-18',
     this.berkas = const [],
+    this.syarat = const [],
+  });
+}
+
+class SyaratGroup {
+  final String judul;
+  final List<String> items;
+
+  /// Label yang tampil di kolom kiri untuk kelompok ini (mis. "Persyaratan"
+  /// atau "Jaminan Keamanan Produk Pelayanan"). Kosong = ikut sel kiri
+  /// kelompok sebelumnya.
+  final String labelKiri;
+
+  /// Jika false, item ditampilkan tanpa nomor urut.
+  final bool bernomor;
+
+  const SyaratGroup(
+    this.judul,
+    this.items, {
+    this.labelKiri = '',
+    this.bernomor = true,
   });
 }
 
@@ -94,13 +116,18 @@ class _LayananAjuanFormState extends State<LayananAjuanForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // DESKRIPSI
-        Text(
-          widget.info.ringkasan,
-          style: const TextStyle(fontSize: 13, color: _smoke, height: 1.5),
-        ),
+        if (widget.info.ringkasan.isNotEmpty)
+          Text(
+            widget.info.ringkasan,
+            style: const TextStyle(fontSize: 13, color: _smoke, height: 1.5),
+          ),
         if (widget.info.bullets.isNotEmpty) ...[
           const SizedBox(height: 12),
           ...widget.info.bullets.map(_buildBullet),
+        ],
+        if (widget.info.syarat.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          _buildSyaratTable(),
         ],
         const SizedBox(height: 12),
         const Divider(height: 1, color: _cardBorder),
@@ -204,53 +231,242 @@ class _LayananAjuanFormState extends State<LayananAjuanForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 6, right: 8),
-                child: _Dot(color: _titleBlue),
-              ),
-              Expanded(
-                child: Text(
-                  b.judul,
-                  style: const TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w800,
-                    color: _titleBlue,
-                    height: 1.4,
+          if (b.judul.isNotEmpty)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 6, right: 8),
+                  child: _Dot(color: _titleBlue),
+                ),
+                Expanded(
+                  child: Text(
+                    b.judul,
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                      color: _titleBlue,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ...b.subs.asMap().entries.map(
+                (e) => Padding(
+                  padding: EdgeInsets.only(
+                      left: b.judul.isEmpty ? 0 : 18, top: 5),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 1, right: 8),
+                        child: Text(
+                          '${e.key + 1}.',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: _appBlue,
+                            height: 1.45,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          e.value,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: _smoke,
+                            height: 1.45,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-          ...b.subs.map(
-            (s) => Padding(
-              padding: const EdgeInsets.only(left: 16, top: 4),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 6, right: 8),
-                    child: _Dot(color: Color(0xFFB0B7BF), size: 5),
-                  ),
-                  Expanded(
-                    child: Text(
-                      s,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: _smoke,
-                        height: 1.45,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
+  }
+
+  // ---- Tabel Persyaratan: kolom kiri label (row-span per blok),
+  //      kolom kanan judul kelompok + baris (bernomor / polos) ----
+  Widget _buildSyaratTable() {
+    // Kelompokkan syarat menjadi blok berdasarkan labelKiri.
+    // Kelompok tanpa labelKiri ikut blok sebelumnya.
+    final groups = widget.info.syarat;
+    final blocks = <_SyaratBlock>[];
+    for (final g in groups) {
+      if (g.labelKiri.isNotEmpty || blocks.isEmpty) {
+        blocks.add(_SyaratBlock(
+          g.labelKiri.isEmpty ? 'Persyaratan' : g.labelKiri,
+          [g],
+        ));
+      } else {
+        blocks.last.groups.add(g);
+      }
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var b = 0; b < blocks.length; b++)
+              Container(
+                decoration: BoxDecoration(
+                  border: b == blocks.length - 1
+                      ? null
+                      : const Border(
+                          bottom: BorderSide(color: _cardBorder),
+                        ),
+                ),
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Kolom kiri: label blok
+                      Container(
+                        width: 96,
+                        alignment: Alignment.topCenter,
+                        padding: const EdgeInsets.fromLTRB(6, 7, 5, 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: const Border(
+                            right: BorderSide(color: _cardBorder),
+                          ),
+                        ),
+                        child: Text(
+                          blocks[b].label,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w800,
+                            color: _titleBlue,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                      // Kolom kanan: konten blok
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: _buildBlockRows(blocks[b]),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildBlockRows(_SyaratBlock block) {
+    final widgets = <Widget>[];
+    for (var g = 0; g < block.groups.length; g++) {
+      final group = block.groups[g];
+      final bool firstGroup = g == 0;
+
+      // Judul kelompok (dilewati jika kosong)
+      if (group.judul.isNotEmpty) {
+        widgets.add(
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: firstGroup
+                    ? BorderSide.none
+                    : const BorderSide(color: _cardBorder),
+                bottom: const BorderSide(color: _cardBorder),
+              ),
+            ),
+            child: Text(
+              group.judul,
+              style: const TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w800,
+                color: _titleBlue,
+                height: 1.3,
+              ),
+            ),
+          ),
+        );
+      }
+
+      // Baris item
+      for (var i = 0; i < group.items.length; i++) {
+        final lastRow =
+            g == block.groups.length - 1 && i == group.items.length - 1;
+        widgets.add(
+          Container(
+            constraints: group.items[i].isEmpty
+                ? const BoxConstraints(minHeight: 14)
+                : const BoxConstraints(),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: lastRow
+                  ? null
+                  : const Border(
+                      bottom: BorderSide(color: _cardBorder),
+                    ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Kolom nomor: tetap ada lebarnya agar teks sejajar dengan
+                // baris bernomor, meski nomornya kosong.
+                SizedBox(
+                  width: 17,
+                  child: (group.bernomor && group.items[i].isNotEmpty)
+                      ? Text(
+                          '${i + 1}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: _appBlue,
+                            height: 1.35,
+                          ),
+                        )
+                      : null,
+                ),
+                Expanded(
+                  child: Text(
+                    group.items[i],
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: _smoke,
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    return widgets;
   }
 
   Widget _label(String text, {bool wajib = false}) {
@@ -311,75 +527,61 @@ class _LayananAjuanFormState extends State<LayananAjuanForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Center(
-          child: Text(
-            'Lampiran Berkas',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: _titleBlue,
+        // Header dengan ikon + judul + progress chip
+        Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: _appBlue.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.folder_copy_rounded,
+                  size: 18, color: _appBlue),
             ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        const Center(
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Berkas yang bertanda ',
-                  style: TextStyle(fontSize: 11, color: _smoke),
-                ),
-                TextSpan(
-                  text: 'BINTANG',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: _danger,
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lampiran Berkas',
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w800,
+                      color: _titleBlue,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: ' Wajib diisi..!',
-                  style: TextStyle(fontSize: 11, color: _smoke),
-                ),
-              ],
+                  SizedBox(height: 2),
+                  Text(
+                    'Unggah dokumen pendukung ajuan Anda',
+                    style: TextStyle(fontSize: 11, color: _smoke),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-        const SizedBox(height: 12),
-        ...List.generate(_berkas.length, _berkasRow),
-        const SizedBox(height: 8),
-        const Text.rich(
-          TextSpan(
+        const SizedBox(height: 14),
+        // ---- Tabel Lampiran (No | Nama Berkas | Unggah | Aksi) ----
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: _cardBorder),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
             children: [
-              TextSpan(
-                text: 'Berkas yang tidak bertanda bintang dan jika ',
-                style: TextStyle(fontSize: 10.5, color: _smoke, height: 1.4),
-              ),
-              TextSpan(
-                text: 'tidak',
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w800,
-                  color: _danger,
-                ),
-              ),
-              TextSpan(
-                text: ' DIUPLOAD, maka klik tombol ',
-                style: TextStyle(fontSize: 10.5, color: _smoke, height: 1.4),
-              ),
-              TextSpan(
-                text: 'HAPUS',
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w800,
-                  color: _danger,
-                ),
-              ),
-              TextSpan(
-                text: ' di sebelahnya..!',
-                style: TextStyle(fontSize: 10.5, color: _smoke, height: 1.4),
-              ),
+              _tableHeader(),
+              ...List.generate(_berkas.length, _berkasRow),
             ],
           ),
         ),
@@ -387,60 +589,134 @@ class _LayananAjuanFormState extends State<LayananAjuanForm> {
     );
   }
 
+  // ---- Header tabel ----
+  Widget _tableHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+      decoration: BoxDecoration(
+        color: _appBlue.withValues(alpha: 0.08),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
+      ),
+      child: Row(
+        children: const [
+          SizedBox(
+            width: 26,
+            child: Text(
+              'No',
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w800,
+                color: _titleBlue,
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Nama Berkas',
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w800,
+                color: _titleBlue,
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          SizedBox(
+            width: 76,
+            child: Text(
+              'Unggah',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w800,
+                color: _titleBlue,
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          SizedBox(
+            width: 40,
+            child: Text(
+              'Aksi',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w800,
+                color: _titleBlue,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _berkasRow(int i) {
     final berkas = _berkas[i];
     final file = _files[i];
+    final bool uploaded = file != null;
+    final bool isLast = i == _berkas.length - 1;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(11),
-        border: Border.all(color: _cardBorder),
+        color: uploaded ? _green.withValues(alpha: 0.05) : Colors.white,
+        border: isLast
+            ? null
+            : const Border(
+                bottom: BorderSide(color: _cardBorder),
+              ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 22,
-                height: 22,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: _fieldBg,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: _cardBorder),
+          // No
+          SizedBox(
+            width: 26,
+            child: Container(
+              width: 24,
+              height: 24,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [_appBlue, _appBlue.withValues(alpha: 0.75)],
                 ),
-                child: Text(
-                  '${i + 1}',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: _titleBlue,
-                  ),
+                borderRadius: BorderRadius.circular(7),
+              ),
+              child: Text(
+                '${i + 1}',
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text.rich(
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Nama Berkas
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
                   TextSpan(
                     children: [
                       TextSpan(
                         text: berkas.nama,
                         style: const TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
                           color: _titleBlue,
-                          height: 1.35,
+                          height: 1.3,
                         ),
                       ),
                       if (berkas.wajib)
                         const TextSpan(
-                          text: ' *',
+                          text: '  *',
                           style: TextStyle(
-                            fontSize: 12.5,
+                            fontSize: 12,
                             fontWeight: FontWeight.w800,
                             color: _danger,
                           ),
@@ -448,73 +724,102 @@ class _LayananAjuanFormState extends State<LayananAjuanForm> {
                     ],
                   ),
                 ),
-              ),
-            ],
+                if (uploaded) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.check_circle_rounded,
+                          size: 12, color: _green),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          file,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w600,
+                            color: _green,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => setState(() => _files[i] = 'berkas_${i + 1}.pdf'),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: _fieldBg,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: _cardBorder),
-                  ),
-                  child: const Text(
-                    'Pilih Berkas',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: _titleBlue,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  file ?? 'Belum ada file',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    color: file == null ? const Color(0xFFB0B7BF) : _appBlue,
-                    fontWeight:
-                        file == null ? FontWeight.w400 : FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () {
-                  if (berkas.wajib) return;
-                  setState(() => _files[i] = null);
-                },
-                child: Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: berkas.wajib
-                        ? _appBlue.withValues(alpha: 0.12)
-                        : _danger.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(9),
-                  ),
-                  child: Icon(
-                    berkas.wajib
-                        ? Icons.settings_rounded
-                        : Icons.delete_rounded,
-                    size: 17,
-                    color: berkas.wajib ? _appBlue : _danger,
-                  ),
-                ),
-              ),
-            ],
+          const SizedBox(width: 8),
+          // Unggah
+          SizedBox(
+            width: 76,
+            child: Center(child: _uploadCell(i)),
+          ),
+          const SizedBox(width: 8),
+          // Aksi (settings jika wajib, delete jika opsional)
+          SizedBox(
+            width: 40,
+            child: Center(child: _aksiCell(i, berkas)),
           ),
         ],
+      ),
+    );
+  }
+
+  // Kolom "Unggah": tombol pilih berkas / indikator sudah diunggah
+  Widget _uploadCell(int i) {
+    final uploaded = _files[i] != null;
+    return GestureDetector(
+      onTap: () => setState(() => _files[i] = 'berkas_${i + 1}.pdf'),
+      child: Container(
+        height: 34,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: uploaded
+              ? _green.withValues(alpha: 0.12)
+              : _appBlue.withValues(alpha: 0.10),
+          borderRadius: BorderRadius.circular(9),
+          border: Border.all(
+            color: uploaded
+                ? _green.withValues(alpha: 0.35)
+                : _appBlue.withValues(alpha: 0.30),
+          ),
+        ),
+        child: Icon(
+          uploaded ? Icons.autorenew_rounded : Icons.cloud_upload_rounded,
+          size: 17,
+          color: uploaded ? _green : _appBlue,
+        ),
+      ),
+    );
+  }
+
+  // Kolom "Aksi": settings (berkas wajib) / delete (berkas opsional)
+  Widget _aksiCell(int i, BerkasItem berkas) {
+    final bool wajib = berkas.wajib;
+    return GestureDetector(
+      onTap: () {
+        if (wajib) {
+          _snack('Berkas wajib tidak dapat dihapus. Ganti file bila perlu.');
+        } else {
+          setState(() => _files[i] = null);
+          _snack('Berkas opsional dihapus.');
+        }
+      },
+      child: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: wajib
+              ? _appBlue.withValues(alpha: 0.12)
+              : _danger.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Icon(
+          wajib ? Icons.settings_rounded : Icons.delete_rounded,
+          size: 17,
+          color: wajib ? _appBlue : _danger,
+        ),
       ),
     );
   }
@@ -659,16 +964,21 @@ class _LayananAjuanFormState extends State<LayananAjuanForm> {
   }
 }
 
+class _SyaratBlock {
+  final String label;
+  final List<SyaratGroup> groups;
+  _SyaratBlock(this.label, this.groups);
+}
+
 class _Dot extends StatelessWidget {
   final Color color;
-  final double size;
-  const _Dot({required this.color, this.size = 6});
+  const _Dot({required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
-      height: size,
+      width: 6,
+      height: 6,
       decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }

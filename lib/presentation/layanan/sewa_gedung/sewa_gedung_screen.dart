@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../agenda/agenda_screen.dart';
+import '../../bantuan/bantuan_screen.dart';
 import 'sewa_gedung_data.dart';
 import 'sewa_gedung_detail_screen.dart';
 
@@ -52,35 +53,78 @@ class _SewaGedungScreenState extends State<SewaGedungScreen> {
       backgroundColor: _bg,
       bottomNavigationBar: _buildBottomNav(),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHero(),
-                    const SizedBox(height: 8),
-                    ..._filtered.map((g) => Padding(
-                          padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
-                          child: _buildGedungCard(g),
-                        )),
-                    const SizedBox(height: 8),
-                    _buildKalenderSection(),
-                    const SizedBox(height: 18),
-                    _buildAgendaSection(),
-                    const SizedBox(height: 18),
-                    _buildProsedurSection(),
-                    const SizedBox(height: 18),
-                    _buildKontakSection(),
-                  ],
+            Column(
+              children: [
+                _buildHeader(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 28),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHero(),
+                        const SizedBox(height: 8),
+                        ..._filtered.map((g) => Padding(
+                              padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+                              child: _buildGedungCard(g),
+                            )),
+                        const SizedBox(height: 8),
+                        _buildKalenderSection(),
+                        const SizedBox(height: 18),
+                        _buildAgendaSection(),
+                        const SizedBox(height: 18),
+                        _buildProsedurSection(),
+                        const SizedBox(height: 18),
+                        _buildKontakSection(),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
+
+            // Tombol Pusat Bantuan
+            Positioned(right: 26, bottom: 14, child: _buildHelpButton()),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // PUSAT BANTUAN
+  // ============================================================
+  Widget _buildHelpButton() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BantuanScreen()),
+        ),
+        child: Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            color: _primary,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.support_agent_rounded,
+            size: 27,
+            color: Colors.white,
+          ),
         ),
       ),
     );
@@ -1073,7 +1117,7 @@ class _SewaGedungScreenState extends State<SewaGedungScreen> {
           children: [
             Expanded(
               child: _navItem(Icons.home_outlined, Icons.home_rounded,
-                  'Beranda', false, () => Navigator.pop(context)),
+                  'Beranda', false, () => Navigator.popUntil(context, (route) => route.isFirst)),
             ),
             Expanded(
               child: _navItem(Icons.grid_view_rounded, Icons.grid_view_rounded,

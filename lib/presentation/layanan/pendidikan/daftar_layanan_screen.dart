@@ -395,6 +395,380 @@ class _DaftarLayananScreenState extends State<DaftarLayananScreen> {
         ],
       );
     }
+    if (l.nama == 'Penyesuaian Data PTK - PAUDPNF') {
+      return const LayananInfo(
+        nama: 'Penyesuaian Data PTK - PAUDPNF',
+        ringkasan:
+            'Layanan Perbaikan Data Pendidik dan Tenaga Kependidikan pada '
+            'Dapodik Jenjang PAUD PNF.',
+        tanggal: '2022-12-18',
+        berkas: [
+          BerkasItem(
+              'Surat Permohonan ditujukan kepada Kepala Dinas Pendidikan dan '
+              'Kebudayaan',
+              wajib: true),
+          BerkasItem('Lampiran Pendukung Perubahan Data', wajib: true),
+          BerkasItem('Pengantar Korwil', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Penyesuaian Data PTK - SD') {
+      return const LayananInfo(
+        nama: 'Penyesuaian Data PTK - SD',
+        ringkasan:
+            'Layanan Perbaikan Data Pendidik dan Tenaga Kependidikan pada '
+            'Dapodik Jenjang SD, meliputi:',
+        bullets: [
+          LayananBullet('', [
+            'Perubahan Jenis PTK pada pangkalan data DAPODIK',
+            'Penyesuaian TMT pada pangkalan data DAPODIK',
+            'Penyesuaian Tempat Penugasan pada pangkalan data DAPODIK',
+          ]),
+        ],
+        tanggal: '2022-12-18',
+        berkas: [
+          BerkasItem('Surat Permohonan', wajib: true),
+          BerkasItem('Lampiran Pendukung Perubahan Data', wajib: true),
+          BerkasItem('Pengantar Korwil', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Penyesuaian Data PTK - SMP') {
+      return const LayananInfo(
+        nama: 'Penyesuaian Data PTK - SMP',
+        ringkasan:
+            'Layanan Perbaikan Data Pendidik dan Tenaga Kependidikan pada '
+            'Dapodik Jenjang SMP, meliputi:',
+        bullets: [
+          LayananBullet('', [
+            'Perubahan Jenis PTK pada pangkalan data DAPODIK',
+            'Penyesuaian TMT pada pangkalan data DAPODIK',
+          ]),
+        ],
+        tanggal: '2022-12-18',
+        berkas: [
+          BerkasItem('Surat Permohonan (pdf/gambar)', wajib: true),
+          BerkasItem('Lampiran Pendukung Perubahan Data', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Permohonan Kode Referal Operator Yayasan') {
+      return const LayananInfo(
+        nama: 'Permohonan Kode Referal Operator Yayasan',
+        ringkasan:
+            'Permohonan Kode Referal untuk pendaftaran Operator Yayasan pada '
+            'laman SDM Pusdatin (kemdikbud.go.id).',
+        tanggal: '2022-12-18',
+        berkas: [
+          BerkasItem('Surat Penugasan Operator Yayasan (Gambar/PDF)',
+              wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Surat Keterangan Pindah Keluar Siswa SD') {
+      return const LayananInfo(
+        nama: 'Surat Keterangan Pindah Keluar Siswa SD',
+        ringkasan: '',
+        syarat: [
+          SyaratGroup('Mutasi Keluar Sekolah dalam Kabupaten Sragen', [
+            'Surat keterangan pindah sekolah yang ditandatangani Kepala '
+                'Sekolah',
+            'Surat Keterangan Formasi kelas dari Sekolah yang akan dituju',
+            'Fotokopi raport rangkap 1 (satu)',
+            'Menunjukkan rapot asli',
+          ]),
+          SyaratGroup('Mutasi Keluar Sekolah ke Kabupaten/Kota lain', [
+            'Surat permohonan mutasi yang ditandatangani Kepala Sekolah',
+            'Fotokopi rapot rangkap 1 (satu)',
+            'Menunjukkan rapot asli',
+          ]),
+        ],
+        tanggal: '2022-12-18',
+        berkas: [
+          BerkasItem('Surat Keterangan Pindah dari Sekolah asal (gambar/pdf)',
+              wajib: true),
+          BerkasItem('Rapot Siswa (Gambar/PDF)', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Penyesuaian Data Rombel Siswa') {
+      return const LayananInfo(
+        nama: 'Penyesuaian Data Rombel Siswa',
+        ringkasan:
+            'Layanan perubahan data siswa, rombel, kelas pada pangkalan data '
+            'DAPODIK.\n\nCatatan: Untuk ajuan perubahan penyesuaian '
+            'rombel/kelas peserta didik dipastikan anak sudah terdata pada '
+            'Dapodik dan sekolah telah melakukan singkronisasi dapodik.',
+        tanggal: '2022-12-21',
+        berkas: [
+          BerkasItem('Surat Permohonan (pdf/gambar)', wajib: true),
+          BerkasItem('Lampiran Pendukung Perubahan Data', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Mutasi Dapodik PTK - SD') {
+      return const LayananInfo(
+        nama: 'Mutasi Dapodik PTK - SD',
+        ringkasan: 'Permohonan Mutasi Data Dapodik GTK Sekolah Dasar.',
+        tanggal: '2023-01-04',
+        berkas: [
+          BerkasItem(
+              'Surat Permohonan Mutasi PTK dari KS kepada Kepala Dinas',
+              wajib: true),
+          BerkasItem('Ijazah S1 dan Sertifikat Pendidik', wajib: true),
+          BerkasItem('SK Pembagian Tugas', wajib: true),
+          BerkasItem('Surat keterangan Mutasi dari Sekolah Lama', wajib: true),
+          BerkasItem('SK Penugasan di Unit Kerja Baru', wajib: true),
+          BerkasItem('Profil PTK dari Dapodik', wajib: true),
+          BerkasItem('Pengantar Korwil', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Mutasi Dapodik PTK - SMP') {
+      return const LayananInfo(
+        nama: 'Mutasi Dapodik PTK - SMP',
+        ringkasan:
+            'Permohonan Mutasi Data Dapodik GTK Sekolah Menengah Pertama.',
+        tanggal: '2023-01-09',
+        berkas: [
+          BerkasItem('Surat Permohonan TTD Kepsek', wajib: true),
+          BerkasItem('Ijazah', wajib: true),
+          BerkasItem('Lolos Analisis Kebutuhan Guru', wajib: true),
+          BerkasItem('Transkip Nilai', wajib: true),
+          BerkasItem('Surat Penugasan', wajib: true),
+          BerkasItem('Profil PTK dari Dapodik', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Mutasi Dapodik PTK - PAUD/PNF') {
+      return const LayananInfo(
+        nama: 'Mutasi Dapodik PTK - PAUD/PNF',
+        ringkasan: 'Permohonan Mutasi Data Dapodik GTK PAUD dan PNF.',
+        tanggal: '2023-01-16',
+        berkas: [
+          BerkasItem(
+              'Surat Permohonan Mutasi PTK (diTTD Kepala Sekolah) ditujukan '
+              'kepada Kepala Dinas',
+              wajib: true),
+          BerkasItem('Ijazah Terakhir', wajib: true),
+          BerkasItem(
+              'SK Pengangkatan di Unit Kerja Baru dari Yayasan / SK Penugasan '
+              'Dinas apabila ASN',
+              wajib: true),
+          BerkasItem('Profil PTK dari Dapodik', wajib: true),
+          BerkasItem('Pengantar Korwil', wajib: true),
+          BerkasItem(
+              'SK Pembagian Tugas Mengajar (diTTD Kepala Sekolah)',
+              wajib: true),
+          BerkasItem(
+              'Surat Pernyataan Melepas dari Yayasan Lama (untuk GTY)',
+              wajib: true),
+        ],
+      );
+    }
+    if (l.nama ==
+        'Penugasan Kepala Sekolah & Plt. Kepala Sekolah SD - Dapodik') {
+      return const LayananInfo(
+        nama: 'Penugasan Kepala Sekolah & Plt. Kepala Sekolah SD - Dapodik',
+        ringkasan:
+            'Penugasan kepala sekolah baru sekolah dasar pada aplikasi dapodik.',
+        tanggal: '2023-01-17',
+        berkas: [
+          BerkasItem('SK Pelantikan/Penugasan', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Penugasan Kepala Sekolah & Plt. Kepala SMP - Dapodik') {
+      return const LayananInfo(
+        nama: 'Penugasan Kepala Sekolah & Plt. Kepala SMP - Dapodik',
+        ringkasan:
+            'Penugasan kepala sekolah baru Sekolah menengah pertama pada '
+            'aplikasi dapodik.',
+        tanggal: '2023-01-17',
+        berkas: [
+          BerkasItem('Surat Permohonan (pdf/gambar)', wajib: true),
+          BerkasItem('Dokumen Pendukung'),
+        ],
+      );
+    }
+    if (l.nama == 'Penerbitan NPYP (Nomor Pokok Yayasan Pendidikan)') {
+      return const LayananInfo(
+        nama: 'Penerbitan NPYP (Nomor Pokok Yayasan Pendidikan)',
+        ringkasan:
+            'Nomor Pokok Yayasan Pendidikan.\n\nNPYP adalah standar kode '
+            'pengenal yang unik untuk yayasan yang mempunyai Satuan '
+            'Pendidikan/Lembaga yang dikembangkan oleh Pusat Data dan '
+            'Teknologi Informasi (Pusdatin) dan berlaku secara nasional.\n\n'
+            'Kode NPYP Indonesia terdiri dari 6 digit kombinasi huruf dan '
+            'angka dan diberikan kepada yayasan yang masih aktif.',
+        tanggal: '2023-03-24',
+        berkas: [
+          BerkasItem(
+              'Surat Permohonan Kepada Kepala Dinas Pendidikan dan Kebudayaan',
+              wajib: true),
+          BerkasItem('Formulir Pengajuan NPYP', wajib: true),
+          BerkasItem('Foto Yayasan (max 1MB JPG)', wajib: true),
+          BerkasItem('SK Pengesahan Badan Hukum Menkumham (Max 1Mb PDF)',
+              wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Pengaktifan kembali siswa dapodik') {
+      return const LayananInfo(
+        nama: 'Pengaktifan kembali siswa dapodik',
+        ringkasan:
+            'Pengaktifan kembali siswa pada dapodik yang telah dikeluarkan '
+            'sebelumnya dikarenakan pindah sekolah atau putus sekolah, '
+            'pastikan menyertakan NISN, Nama, Rombel dan sekolah aktif saat '
+            'ini.',
+        tanggal: '2023-08-04',
+        berkas: [
+          BerkasItem('Surat Pindah/Keterangan aktif dalam bentuk pdf',
+              wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Penugasan Kepala Sekolah & Plt. Kepala PAUD/PNF') {
+      return const LayananInfo(
+        nama: 'Penugasan Kepala Sekolah & Plt. Kepala PAUD/PNF',
+        ringkasan:
+            'Penambahan penugasan KEPALA SEKOLAH / PLT KEPALA SEKOLAH dan '
+            'tugas tambahan pada pangkalan data DAPODIK.',
+        tanggal: '2023-08-09',
+        berkas: [
+          BerkasItem('SK PLT Kepala Sekolah (PDF maksimal 1MB)', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Pengadaan Barang dan Jasa') {
+      return const LayananInfo(
+        nama: 'Pengadaan Barang dan Jasa',
+        ringkasan:
+            'Berkas yang diupload dalam bentuk PDF.\n\nSurat Permohonan PPK '
+            'kepada PP (memuat jadwal pengiriman dan jumlah sesuai yang '
+            'dipesan), HPS, RUP, DPA.',
+        tanggal: '2024-03-13',
+        berkas: [
+          BerkasItem('Surat Permohonan PPK ke PP (PDF)'),
+          BerkasItem('HPS (pdf)', wajib: true),
+          BerkasItem('RUP (pdf)', wajib: true),
+          BerkasItem('DPA (pdf)', wajib: true),
+          BerkasItem('kl', wajib: true),
+          BerkasItem('ADA', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Pembatalan Kelulusan/Meluluskan Siswa di DAPODIK') {
+      return const LayananInfo(
+        nama: 'Pembatalan Kelulusan/Meluluskan Siswa di DAPODIK',
+        ringkasan:
+            'Penting: Sebelum mengajukan murid baru atau mutasi terutama yang '
+            'tidak bisa di TARIK ONLINE melalui SP DATADIK, pastikan sudah '
+            'melakukan singkronisasi DAPODIK.',
+        tanggal: '2025-07-23',
+        berkas: [
+          BerkasItem('Scan Ijazah/Surat Keterangan', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Laporan Bulanan Kepegawaian') {
+      return const LayananInfo(
+        nama: 'Laporan Bulanan Kepegawaian',
+        ringkasan:
+            'Layanan Laporan Bulanan Kepegawaian dari Sekolah Dasar dan '
+            'Korwil.',
+        tanggal: '2025-09-05',
+        berkas: [
+          BerkasItem('Surat Permohonan', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Laporan Progres SEDUKARSA') {
+      return const LayananInfo(
+        nama: 'Laporan Progres SEDUKARSA',
+        ringkasan:
+            'Laporan Progres Pelaksanaan Program SEDUKARSA bagi sekolah.',
+        tanggal: '2026-04-20',
+        berkas: [
+          BerkasItem('Lampiran', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Penerbitan NPSN PAUD, PKBM, LKP, BIMBEL') {
+      return const LayananInfo(
+        nama: 'Penerbitan NPSN PAUD, PKBM, LKP, BIMBEL',
+        ringkasan: 'Penerbitan NPSN PAUD, PKBM, LKP, BIMBEL.',
+        tanggal: '2026-07-20',
+        berkas: [
+          BerkasItem('Surat Permohonan (pdf/gambar)', wajib: true),
+          BerkasItem('Dokumen Pendukung'),
+        ],
+      );
+    }
+    if (l.nama == 'Surat Keterangan Pindah Keluar Siswa SMP') {
+      return const LayananInfo(
+        nama: 'Surat Keterangan Pindah Keluar Siswa SMP',
+        ringkasan: '',
+        syarat: [
+          SyaratGroup('Mutasi Keluar Sekolah dalam Kabupaten Sragen', [
+            'Surat keterangan pindah sekolah yang ditandatangani Kepala '
+                'Sekolah',
+            'Surat Keterangan Formasi kelas dari Sekolah yang akan dituju',
+            'Fotokopi raport rangkap 1 (satu)',
+            'Menunjukkan rapot asli',
+          ]),
+          SyaratGroup('Mutasi Keluar Sekolah ke Kabupaten/Kota lain', [
+            'Surat permohonan mutasi yang ditandatangani Kepala Sekolah',
+            'Fotokopi rapot rangkap 1 (satu)',
+            'Menunjukkan rapot asli',
+          ]),
+        ],
+        tanggal: '2022-12-18',
+        berkas: [
+          BerkasItem('Surat Keterangan Pindah dari Sekolah asal (gambar/pdf)',
+              wajib: true),
+          BerkasItem('Rapot Siswa (Gambar/PDF)', wajib: true),
+        ],
+      );
+    }
+    if (l.nama == 'Penerbitan NPSN dan NSS') {
+      return const LayananInfo(
+        nama: 'Penerbitan NPSN dan NSS',
+        ringkasan:
+            'Layanan Permohonan Penerbitan NPSN (nomor pokok sekolah '
+            'nasional) bagi Satuan Pendidikan/Lembaga Baru.',
+        syarat: [
+          SyaratGroup('', [
+            'Surat permohonan NPSN ditanda tangani Ketua Yayasan/Kepala '
+                'Sekolah',
+            'Mengisi formulir pengajuan ditanda tangani Ketua Yayasan/Kepala '
+                'Sekolah',
+            'Melampirkan Foto Papan Nama Sekolah',
+            'Melampirkan Foto Sekolah Tampak Depan',
+            'Melampirkan fotocopy SK Operasional',
+            '',
+          ], labelKiri: 'Persyaratan'),
+          SyaratGroup(
+            '',
+            ['Nomor Pokok Sekolah Nasional Terdaftar Kemdikbud'],
+            labelKiri: 'Jaminan Keamanan Produk Pelayanan',
+            bernomor: false,
+          ),
+        ],
+        tanggal: '2022-12-26',
+        berkas: [
+          BerkasItem('Surat Permohonan TTD Sekolah/Yayasan', wajib: true),
+          BerkasItem('Formulir NPSN (form terlampir)', wajib: true),
+          BerkasItem('SK Operasional Max Size 1Mb dalam bentuk PDF File',
+              wajib: true),
+          BerkasItem('Foto Papan Nama Sekolah Max Size 1Mb dalam bentuk JPG',
+              wajib: true),
+          BerkasItem(
+              'Foto Sekolah Tampak Depan Max Size 1Mb dalam bentuk JPG File',
+              wajib: true),
+        ],
+      );
+    }
     // Layanan lain: konten generik.
     return LayananInfo(
       nama: l.nama,
@@ -428,7 +802,7 @@ class _DaftarLayananScreenState extends State<DaftarLayananScreen> {
           children: [
             Expanded(
               child: _navItem(context, Icons.home_outlined, Icons.home_rounded,
-                  'Beranda', false, () => Navigator.pop(context)),
+                  'Beranda', false, () => Navigator.popUntil(context, (route) => route.isFirst)),
             ),
             Expanded(
               child: _navItem(context, Icons.grid_view_rounded,

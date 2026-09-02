@@ -101,7 +101,7 @@ class MppBottomNav extends StatelessWidget {
           children: [
             Expanded(
               child: _item(context, Icons.home_outlined, Icons.home_rounded,
-                  'Beranda', false, () => Navigator.pop(context)),
+                  'Beranda', false, () => Navigator.popUntil(context, (route) => route.isFirst)),
             ),
             Expanded(
               child: _item(context, Icons.grid_view_rounded,
@@ -113,7 +113,7 @@ class MppBottomNav extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const AgendaScreen(showBottomNav: false),
+                    builder: (_) => const AgendaScreen(),
                   ),
                 );
               }),

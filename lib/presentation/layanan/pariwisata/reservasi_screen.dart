@@ -65,32 +65,37 @@ class _ReservasiScreenState extends State<ReservasiScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pageBackground,
-      appBar: _buildAppBar(),
-      body: _buildBody(),
+      body: SafeArea(
+        child: _buildBody(),
+      ),
       bottomNavigationBar: _buildBottomButtons(),
     );
   }
 
   // ============================================================
-  // APP BAR
+  // HEADER (judul tengah, seragam dengan Konfirmasi & Pembayaran)
   // ============================================================
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0.5,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22, color: primaryBlue),
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: const Text(
-        'Reservasi',
-        style: TextStyle(
-          color: primaryBlue,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
+  Widget _buildHeader() {
+    return Column(
+      children: [
+        const Text(
+          'E-Tiket Wisata Sragen',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: darkText,
+          ),
         ),
-      ),
-      centerTitle: false,
+        const SizedBox(height: 6),
+        Text(
+          'Layanan Pembelian Tiket Wisata Online Kabupaten Sragen',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 13,
+            color: greyText.withValues(alpha: 0.9),
+          ),
+        ),
+      ],
     );
   }
 
@@ -100,10 +105,15 @@ class _ReservasiScreenState extends State<ReservasiScreen> {
   Widget _buildBody() {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Header (judul + subtitle di tengah)
+          _buildHeader(),
+
+          const SizedBox(height: 24),
+
           // Stepper
           _buildStepper(),
 
@@ -129,20 +139,33 @@ class _ReservasiScreenState extends State<ReservasiScreen> {
   }
 
   // ============================================================
-  // STEPPER (Pilih ✓, Isi Data ✓ active, Konfirmasi 3, Bayar 4)
+  // STEPPER (Pilih Destinasi ✓, Isi Data active, Konfirmasi, Pembayaran)
+  // Gaya seragam dengan halaman lain (ikon + garis biru).
   // ============================================================
   Widget _buildStepper() {
     final steps = [
-      _StepData(label: 'Pilih', isCompleted: true, isActive: false),
-      _StepData(label: 'Isi Data', isCompleted: true, isActive: true),
-      _StepData(label: 'Konfirmasi', isCompleted: false, isActive: false, number: '3'),
-      _StepData(label: 'Bayar', isCompleted: false, isActive: false, number: '4'),
+      _StepInfo(
+          label: 'Pilih Destinasi',
+          icon: Icons.location_on,
+          isCompleted: true),
+      _StepInfo(
+          label: 'Isi Data',
+          icon: Icons.edit_note,
+          isCompleted: false,
+          isActive: true),
+      _StepInfo(
+          label: 'Konfirmasi',
+          icon: Icons.description_outlined,
+          isCompleted: false),
+      _StepInfo(
+          label: 'Pembayaran',
+          icon: Icons.payment_outlined,
+          isCompleted: false),
     ];
 
     return Row(
       children: List.generate(steps.length * 2 - 1, (index) {
         if (index.isOdd) {
-          // Connector line
           final int stepBefore = index ~/ 2;
           final bool isCompletedLine = steps[stepBefore].isCompleted;
           return Expanded(
@@ -152,55 +175,42 @@ class _ReservasiScreenState extends State<ReservasiScreen> {
             ),
           );
         }
-
-        final step = steps[index ~/ 2];
-        return _buildStepCircle(step);
+        return _buildStepIcon(steps[index ~/ 2]);
       }),
     );
   }
 
-  Widget _buildStepCircle(_StepData step) {
+  Widget _buildStepIcon(_StepInfo step) {
+    final bool filled = step.isCompleted || step.isActive;
     return Column(
       children: [
         Container(
-          width: 34,
-          height: 34,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: (step.isCompleted || step.isActive)
-                ? primaryBlue
-                : Colors.white,
+            color: filled ? primaryBlue : Colors.white,
             border: Border.all(
-              color: (step.isCompleted || step.isActive)
-                  ? primaryBlue
-                  : const Color(0xFFBDBDBD),
+              color: filled ? primaryBlue : const Color(0xFFBDBDBD),
               width: 2,
             ),
           ),
           child: Center(
-            child: (step.isCompleted || step.isActive)
-                ? const Icon(Icons.check, size: 18, color: Colors.white)
-                : Text(
-                    step.number ?? '',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFFBDBDBD),
-                    ),
-                  ),
+            child: Icon(
+              step.icon,
+              size: 18,
+              color: filled ? Colors.white : const Color(0xFFBDBDBD),
+            ),
           ),
         ),
         const SizedBox(height: 6),
         Text(
           step.label,
+          textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 11,
-            fontWeight: (step.isCompleted || step.isActive)
-                ? FontWeight.w600
-                : FontWeight.w400,
-            color: (step.isCompleted || step.isActive)
-                ? primaryBlue
-                : greyText,
+            fontSize: 9,
+            fontWeight: filled ? FontWeight.w600 : FontWeight.w400,
+            color: filled ? primaryBlue : greyText,
           ),
         ),
       ],
@@ -889,18 +899,18 @@ class _ReservasiScreenState extends State<ReservasiScreen> {
 }
 
 // ================================================================
-// STEP DATA MODEL
+// STEP INFO MODEL
 // ================================================================
-class _StepData {
+class _StepInfo {
   final String label;
+  final IconData icon;
   final bool isCompleted;
   final bool isActive;
-  final String? number;
 
-  const _StepData({
+  const _StepInfo({
     required this.label,
+    required this.icon,
     required this.isCompleted,
-    required this.isActive,
-    this.number,
+    this.isActive = false,
   });
 }

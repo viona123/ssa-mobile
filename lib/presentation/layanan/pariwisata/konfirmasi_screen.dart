@@ -200,11 +200,11 @@ class KonfirmasiScreen extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF00C9A7), Color(0xFF00B4D8)],
+          colors: [Color(0xFF007EA7), Color(0xFF00B4D8)],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00C9A7).withValues(alpha: 0.3),
+            color: const Color(0xFF007EA7).withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -444,7 +444,7 @@ class KonfirmasiScreen extends StatelessWidget {
           // Batal
           Expanded(
             flex: 2,
-            child: ElevatedButton(
+            child: OutlinedButton(
               onPressed: () {
                 // Kembali ke halaman pariwisata
                 Navigator.of(context).popUntil((route) => route.isFirst || route.settings.name == '/pariwisata');
@@ -454,14 +454,14 @@ class KonfirmasiScreen extends StatelessWidget {
                   Navigator.of(context).pop();
                 }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFEBEE),
-                foregroundColor: Colors.red,
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: primaryBlue,
+                side: const BorderSide(color: primaryBlue, width: 1.4),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                elevation: 0,
               ),
               child: const Text(
                 'Batal',
@@ -513,7 +513,7 @@ class KonfirmasiScreen extends StatelessWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00C9A7),
+                backgroundColor: primaryBlue,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

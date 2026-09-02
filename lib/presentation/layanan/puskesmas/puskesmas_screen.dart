@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../bantuan/bantuan_screen.dart';
 import 'puskesmas_shared.dart';
 import 'portal_klinisia_screen.dart';
 import 'e_dashboard_screen.dart';
@@ -103,7 +104,9 @@ class PuskesmasScreen extends StatelessWidget {
       backgroundColor: PuskesmasColors.pageBackground,
       bottomNavigationBar: const PuskesmasBottomNav(),
       body: SafeArea(
-        child: Column(
+        child: Stack(
+          children: [
+            Column(
           children: [
             const PuskesmasHeader(title: 'Layanan Puskesmas'),
             Expanded(
@@ -161,6 +164,51 @@ class PuskesmasScreen extends StatelessWidget {
               ),
             ),
           ],
+            ),
+
+            // Tombol Pusat Bantuan
+            Positioned(
+              right: 26,
+              bottom: 14,
+              child: _buildHelpButton(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // PUSAT BANTUAN
+  // ============================================================
+  Widget _buildHelpButton(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BantuanScreen()),
+        ),
+        child: Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            color: PuskesmasColors.primaryGreen,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.support_agent_rounded,
+            size: 27,
+            color: Colors.white,
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../bantuan/bantuan_screen.dart';
 import '../agenda/agenda_screen.dart';
@@ -12,7 +13,9 @@ import '../layanan/pengaduan/pengaduan_screen.dart';
 import '../layanan/perdagangan/perdagangan_screen.dart';
 import '../layanan/layanan_mpp/layanan_mpp_screen.dart';
 import '../layanan/layanan_screen.dart';
+import '../layanan/layanan_search_delegate.dart';
 import '../layanan/pariwisata/pariwisata_screen.dart';
+import '../layanan/pariwisata/reservasi_screen.dart';
 import '../layanan/poli_rsud/poli_rsud_screen.dart';
 import '../layanan/geospasial/geospasial_screen.dart';
 
@@ -52,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ServiceItem(title: 'Kemiskinan', icon: Icons.insert_chart_outlined),
     ServiceItem(title: 'Keuangan', icon: Icons.payments_outlined),
     ServiceItem(title: 'Pengaduan', icon: Icons.campaign_outlined),
-    ServiceItem(title: 'Layanan MPP', icon: Icons.business_outlined),
+    ServiceItem(title: 'Layanan MPP', icon: Icons.apartment_rounded),
     ServiceItem(title: 'Pariwisata', icon: Icons.explore_outlined),
     ServiceItem(title: 'Pajak', icon: Icons.account_balance_wallet_outlined),
     ServiceItem(title: 'Bus Sekolah', icon: Icons.directions_bus_outlined),
@@ -106,7 +109,14 @@ class _HomeScreenState extends State<HomeScreen> {
         return const LayananScreen(showBottomNav: false);
       case 2:
         // Agenda Screen
-        return AgendaScreen(showBottomNav: false);
+        return AgendaScreen(
+          showBottomNav: false,
+          onBack: () {
+            setState(() {
+              selectedNavigation = 0;
+            });
+          },
+        );
       default:
         // Home Screen (Beranda)
         return Stack(
@@ -139,20 +149,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 20),
 
                     // AGENDA BULAN INI
-                    _buildMonthlyAgenda(
-                      month: 'OKT',
-                      date: '24',
-                      title: 'Agenda Bulan Ini',
-                      subtitle: 'Pameran The Land Of Java Man',
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    _buildMonthlyAgenda(
-                      month: 'OKT',
-                      date: '28',
-                      title: 'Agenda Bulan Ini',
-                      subtitle: 'Pekan Budaya Sragen',
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        setState(() {
+                          selectedNavigation = 2;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          _buildMonthlyAgenda(
+                            month: 'OKT',
+                            date: '21',
+                            title: 'Festival UMKM Sragen',
+                            subtitle: '21 Okt - 25 Okt',
+                          ),
+                          const SizedBox(height: 10),
+                          _buildMonthlyAgenda(
+                            month: 'OKT',
+                            date: '28',
+                            title: 'Sumpah Pemuda',
+                            subtitle: '28 Okt - 29 Okt',
+                          ),
+                        ],
+                      ),
                     ),
 
                     // RUANG BAWAH AGAR HELP TIDAK MENUTUP CONTENT
@@ -198,33 +218,48 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSearch() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 11, 24, 15),
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          color: const Color(0xFFEFF1F4),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: const Row(
-          children: [
-            SizedBox(width: 15),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _openSearch,
+        child: Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: const Color(0xFFEFF1F4),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: const Row(
+            children: [
+              SizedBox(width: 15),
 
-            Icon(Icons.search, size: 23, color: greyText),
+              Icon(Icons.search, size: 23, color: greyText),
 
-            SizedBox(width: 11),
+              SizedBox(width: 11),
 
-            Expanded(
-              child: Text(
-                'Cari layanan pemerintah...',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: greyText,
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Text(
+                  'Cari layanan pemerintah...',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: greyText,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  // ============================================================
+  // BUKA PENCARIAN LAYANAN
+  // ============================================================
+
+  Future<void> _openSearch() async {
+    await showSearch(
+      context: context,
+      delegate: LayananSearchDelegate(),
     );
   }
 
@@ -233,99 +268,114 @@ class _HomeScreenState extends State<HomeScreen> {
   // ============================================================
 
   Widget _buildWelcomeCard() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        height: 165,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1EA7D3), Color(0xFF087CA4)],
-          ),
-          borderRadius: BorderRadius.circular(23),
-          boxShadow: [
-            BoxShadow(
-              color: primaryBlue.withValues(alpha: 0.14),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Stack(
-          clipBehavior: Clip.hardEdge,
-          children: [
-            Positioned(
-              right: -35,
-              bottom: -45,
-              child: Container(
-                width: 145,
-                height: 145,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    width: 13,
-                  ),
-                ),
-              ),
-            ),
+    const borderRadius = 30.0;
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(22, 17, 22, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: AspectRatio(
+          aspectRatio: 2.0,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final bannerWidth = constraints.maxWidth;
+              final bannerHeight = constraints.maxHeight;
+              final titleFontSize = (bannerWidth * 0.073)
+                  .clamp(22.0, 48.0)
+                  .toDouble();
+              final descriptionFontSize = (bannerWidth * 0.028)
+                  .clamp(8.5, 24.0)
+                  .toDouble();
+              final textGap = (bannerHeight * 0.045)
+                  .clamp(7.0, 28.0)
+                  .toDouble();
+
+              return Stack(
+                fit: StackFit.expand,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 5,
-                    ),
+                  // fix.png sudah memiliki komposisi 2:1 dengan manusia
+                  // dan batu Sangiran utuh di sisi kanan.
+                  Image.asset(
+                    'assets/images/home/fix.png',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [Color(0xFF007F98), Color(0xFF0798B5)],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Deep cyan pekat di kiri, lalu memudar lembut hingga
+                  // transparan agar menyatu dengan pemandangan.
+                  DecoratedBox(
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.13),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: const Text(
-                      'TERBARU',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          const Color(0xFF007F98),
+                          const Color(0xFF008FA8).withValues(alpha: 0.97),
+                          const Color(0xFF0798B5).withValues(alpha: 0.72),
+                          const Color(0xFF0798B5).withValues(alpha: 0.30),
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 0.32, 0.42, 0.52, 0.60],
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 9),
-
-                  const Text(
-                    'Selamat Datang',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  const SizedBox(
-                    width: 310,
-                    child: Text(
-                      'Satu identitas digital untuk akses seluruh layanan publik Sragen dengan aman.',
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        height: 1.3,
+                  // Hanya judul dan deskripsi, seluruhnya di area biru kiri.
+                  Positioned(
+                    left: bannerWidth * 0.055,
+                    top: bannerHeight * 0.17,
+                    width: bannerWidth * 0.40,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.topLeft,
+                      child: SizedBox(
+                        width: bannerWidth * 0.40,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Selamat\nDatang',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: titleFontSize,
+                                fontWeight: FontWeight.w700,
+                                height: 1.05,
+                                letterSpacing: -0.35,
+                              ),
+                            ),
+                            SizedBox(height: textGap),
+                            Text(
+                              'Satu identitas digital untuk\n'
+                              'akses seluruh layanan publik\n'
+                              'Sragen dengan aman.',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: descriptionFontSize,
+                                fontWeight: FontWeight.w400,
+                                height: 1.35,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ],
-              ),
-            ),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -341,30 +391,13 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Layanan Digital',
-                style: TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.w700,
-                  color: darkText,
-                ),
-              ),
-
-              GestureDetector(
-                onTap: () => _showAllServices(),
-                child: const Text(
-                  'Lihat Semua',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: darkBlue,
-                  ),
-                ),
-              ),
-            ],
+          const Text(
+            'Layanan Digital',
+            style: TextStyle(
+              fontSize: 21,
+              fontWeight: FontWeight.w700,
+              color: darkText,
+            ),
           ),
 
           const SizedBox(height: 13),
@@ -380,6 +413,18 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisExtent: 94,
             ),
             itemBuilder: (context, index) {
+              // Sel terakhir = "Lainnya" -> buka halaman kategori layanan.
+              if (index == 11) {
+                return GestureDetector(
+                  onTap: () => _showAllServices(),
+                  child: _buildServiceItem(
+                    ServiceItem(
+                      title: 'Lainnya',
+                      icon: Icons.grid_view_rounded,
+                    ),
+                  ),
+                );
+              }
               return GestureDetector(
                 onTap: () {
                   final String title = services[index].title;
@@ -452,9 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (title == 'Poli RSUD') {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const PoliRsudScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const PoliRsudScreen()),
                     );
                   } else if (title == 'Geospasial') {
                     Navigator.push(
@@ -475,165 +518,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ============================================================
-  // LIHAT SEMUA — BOTTOM SHEET SEMUA LAYANAN
+  // LAINNYA — BOTTOM SHEET SELURUH LAYANAN
   // ============================================================
 
-  void _showAllServices() {
-    showModalBottomSheet(
+  Future<void> _showAllServices() async {
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          decoration: const BoxDecoration(
-            color: pageBackground,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      builder: (sheetContext) {
+        return const FractionallySizedBox(
+          heightFactor: 0.88,
+          child: ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            children: [
-              // Handle bar
-              const SizedBox(height: 12),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD9DEE5),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Title
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Semua Layanan Digital',
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.w700,
-                      color: darkText,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Grid semua layanan
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: GridView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: services.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          crossAxisSpacing: 11,
-                          mainAxisSpacing: 12,
-                          mainAxisExtent: 94,
-                        ),
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context); // tutup bottom sheet
-                          final String title = services[index].title;
-                          if (title == 'Kegawatdaruratan') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const KegawatdaruratanScreen(),
-                              ),
-                            );
-                          } else if (title == 'Kemiskinan') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const KemiskinanScreen(),
-                              ),
-                            );
-                          } else if (title == 'Keuangan') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const KeuanganScreen(),
-                              ),
-                            );
-                          } else if (title == 'Bus Sekolah') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const BusSekolahScreen(),
-                              ),
-                            );
-                          } else if (title == 'Pajak') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const PajakScreen(),
-                              ),
-                            );
-                          } else if (title == 'Pendidikan') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const PendidikanScreen(),
-                              ),
-                            );
-                          } else if (title == 'Pengaduan') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const PengaduanScreen(),
-                              ),
-                            );
-                          } else if (title == 'Perdagangan') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const PerdaganganScreen(),
-                              ),
-                            );
-                          } else if (title == 'Layanan MPP') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const LayananMppScreen(),
-                              ),
-                            );
-                          } else if (title == 'Pariwisata') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const PariwisataScreen(),
-                              ),
-                            );
-                          } else if (title == 'Poli RSUD') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const PoliRsudScreen(),
-                              ),
-                            );
-                          } else if (title == 'Geospasial') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const GeospasialScreen(),
-                              ),
-                            );
-                          }
-                        },
-                        child: _buildServiceItem(services[index]),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
+            child: LayananScreen(showBottomNav: false, showAllServices: true),
           ),
         );
       },
@@ -655,11 +555,13 @@ class _HomeScreenState extends State<HomeScreen> {
             color: service.backgroundColor ?? serviceBox,
             borderRadius: BorderRadius.circular(13),
           ),
-          child: Icon(
-            service.icon,
-            size: 27,
-            color: service.iconColor ?? darkBlue,
-          ),
+          child: service.title == 'Lainnya'
+              ? _buildMoreServicesIcon(service.iconColor ?? darkBlue)
+              : Icon(
+                  service.icon,
+                  size: 27,
+                  color: service.iconColor ?? darkBlue,
+                ),
         ),
 
         const SizedBox(height: 5),
@@ -667,7 +569,11 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(
           height: 27,
           child: Text(
-            service.title,
+            // Pecah kata panjang tertentu agar terbagi 2 baris dengan rapi,
+            // bukan "Kegawatdarurat" lalu "an" sendirian di bawah.
+            service.title == 'Kegawatdaruratan'
+                ? 'Kegawat\ndaruratan'
+                : service.title,
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -680,6 +586,40 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMoreServicesIcon(Color color) {
+    Widget square() {
+      return Container(
+        width: 12,
+        height: 12,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(3),
+        ),
+      );
+    }
+
+    return Center(
+      child: SizedBox(
+        width: 28,
+        height: 28,
+        child: Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: [
+            square(),
+            square(),
+            square(),
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: Icon(Icons.add_rounded, size: 15, color: color),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -727,7 +667,24 @@ class _HomeScreenState extends State<HomeScreen> {
           // ====================================================
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: _buildAgendaCard(agendas.first),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ReservasiScreen(
+                      namaWisata: 'Museum Purbakala Sangiran',
+                      lokasi: 'Kalijambe, Sragen',
+                      deskripsi:
+                          'Situs prasejarah warisan dunia UNESCO, menyimpan '
+                          'koleksi fosil manusia purba...',
+                    ),
+                  ),
+                );
+              },
+              child: _buildAgendaCard(agendas.first),
+            ),
           ),
         ],
       ),

@@ -836,7 +836,7 @@ class _KegawatdaruratanScreenState extends State<KegawatdaruratanScreen> {
         top: false,
         child: Row(
           children: [
-            Expanded(child: _navItem(Icons.home_outlined, Icons.home_rounded, 'Beranda', false, () => Navigator.pop(context))),
+            Expanded(child: _navItem(Icons.home_outlined, Icons.home_rounded, 'Beranda', false, () => Navigator.popUntil(context, (route) => route.isFirst))),
             Expanded(child: _navItem(Icons.grid_view_rounded, Icons.grid_view_rounded, 'Layanan', true, () {})),
             Expanded(child: _navItem(Icons.calendar_month_outlined, Icons.calendar_month_rounded, 'Agenda', false, () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const AgendaScreen()));

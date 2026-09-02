@@ -68,6 +68,7 @@ flutter:
     - assets/images/home/
     - assets/images/agenda/
     - assets/images/bus_sekolah/
+    - assets/images/pusat_bantuan/
     - assets/icons/
     - assets/icons/layanan/
     - assets/icons/navigation/

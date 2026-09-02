@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../agenda/agenda_screen.dart';
 import '../../bantuan/bantuan_screen.dart';
 
 class PengaduanScreen extends StatefulWidget {
@@ -49,6 +50,9 @@ class _PengaduanScreenState extends State<PengaduanScreen> {
   int _currentPage = 1;
   static const int _totalPages = 11;
 
+  // Controller untuk scroll konten (dipakai saat pindah halaman riwayat).
+  final ScrollController _scrollController = ScrollController();
+
   // ============================================================
   // DATA RIWAYAT ADUAN
   // ============================================================
@@ -97,6 +101,7 @@ class _PengaduanScreenState extends State<PengaduanScreen> {
     _isiAduanController.dispose();
     _lokasiController.dispose();
     _teleponController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -120,6 +125,7 @@ class _PengaduanScreenState extends State<PengaduanScreen> {
                 // BODY
                 Expanded(
                   child: SingleChildScrollView(
+                    controller: _scrollController,
                     physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.only(bottom: 90),
                     child: Column(
@@ -497,9 +503,11 @@ class _PengaduanScreenState extends State<PengaduanScreen> {
               children: [
                 Icon(Icons.location_on_outlined, size: 14, color: greyText),
                 const SizedBox(width: 4),
-                Text(
-                  'Klik pada peta untuk menandai lokasi secara akurat.',
-                  style: TextStyle(fontSize: 11, color: greyText),
+                Expanded(
+                  child: Text(
+                    'Klik pada peta untuk menandai lokasi secara akurat.',
+                    style: TextStyle(fontSize: 11, color: greyText),
+                  ),
                 ),
               ],
             ),
@@ -737,22 +745,24 @@ class _PengaduanScreenState extends State<PengaduanScreen> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFD9DEE5)),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          // Map background placeholder
-          ClipRRect(
-            borderRadius: BorderRadius.circular(11),
-            child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFD4E8D4), Color(0xFFB8D4E8)],
+          // Peta background (aset sama seperti Bus Sekolah)
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/bus_sekolah/map_bg-3e98e6.png',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                color: const Color(0xFFE8EDF4),
+                child: const Center(
+                  child: Icon(
+                    Icons.map_outlined,
+                    size: 48,
+                    color: Color(0xFFBFC7D2),
+                  ),
                 ),
               ),
-              child: CustomPaint(painter: _MapGridPainter()),
             ),
           ),
 
@@ -1389,6 +1399,13 @@ class _PengaduanScreenState extends State<PengaduanScreen> {
   void _changePage(int page) {
     if (page < 1 || page > _totalPages) return;
     setState(() => _currentPage = page);
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 1500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   // ============================================================
@@ -1459,7 +1476,7 @@ class _PengaduanScreenState extends State<PengaduanScreen> {
                 label: 'Beranda',
                 active: false,
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.popUntil(context, (route) => route.isFirst);
                 },
               ),
             ),
@@ -1480,7 +1497,14 @@ class _PengaduanScreenState extends State<PengaduanScreen> {
                 activeIcon: Icons.calendar_month_rounded,
                 label: 'Agenda',
                 active: false,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AgendaScreen(),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -1595,58 +1619,6 @@ class _DashedBorderPainter extends CustomPainter {
     }
 
     canvas.drawPath(dashPath, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// ================================================================
-// MAP GRID PAINTER
-// ================================================================
-
-class _MapGridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFC8DCC8).withValues(alpha: 0.5)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5;
-
-    // Draw grid lines to simulate map
-    for (double x = 0; x < size.width; x += 30) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-    for (double y = 0; y < size.height; y += 30) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-
-    // Draw some "roads"
-    final roadPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.7)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-
-    canvas.drawLine(
-      Offset(0, size.height * 0.4),
-      Offset(size.width, size.height * 0.4),
-      roadPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.3, 0),
-      Offset(size.width * 0.3, size.height),
-      roadPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.7, 0),
-      Offset(size.width * 0.7, size.height),
-      roadPaint,
-    );
-    canvas.drawLine(
-      Offset(0, size.height * 0.7),
-      Offset(size.width, size.height * 0.7),
-      roadPaint,
-    );
   }
 
   @override

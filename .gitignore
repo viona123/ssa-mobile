@@ -49,6 +49,10 @@ app.*.map.json
 .kiro/
 context/
 
+# Local-only home images (keep fix.png tracked)
+assets/images/home/manusia.png
+assets/images/home/manusia_purba.png
+
 # Local run output and temporary screenshots
 /run_err.txt
 /run_log.txt
@@ -67,3 +71,4 @@ key.properties
 **/*.jks
 **/google-services.json
 **/GoogleService-Info.plist
+.vscode/templates

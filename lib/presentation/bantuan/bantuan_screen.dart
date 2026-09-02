@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../agenda/agenda_screen.dart';
 
 class BantuanScreen extends StatefulWidget {
   const BantuanScreen({super.key});
@@ -9,9 +12,6 @@ class BantuanScreen extends StatefulWidget {
 }
 
 class _BantuanScreenState extends State<BantuanScreen> {
-  final TextEditingController _searchController =
-      TextEditingController();
-
   int? expandedIndex;
 
   final Color primaryBlue = const Color(0xFF0066B3);
@@ -43,12 +43,6 @@ class _BantuanScreenState extends State<BantuanScreen> {
   ];
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: background,
@@ -69,10 +63,6 @@ class _BantuanScreenState extends State<BantuanScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSearch(),
-
-                    const SizedBox(height: 32),
-
                     _buildHelpBanner(),
 
                     const SizedBox(height: 36),
@@ -112,80 +102,37 @@ class _BantuanScreenState extends State<BantuanScreen> {
       ),
       child: Row(
         children: [
-          const SizedBox(width: 10),
+          const SizedBox(width: 16),
 
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              size: 32,
-              color: Color(0xFF0066B3),
+          // Tombol back dalam kotak lembut
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(13),
+                border: Border.all(color: const Color(0xFFE1E8F0)),
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 18,
+                color: primaryBlue,
+              ),
             ),
-          ),
-
-          const SizedBox(width: 5),
-
-          Text(
-            'Pusat Bantuan',
-            style: GoogleFonts.poppins(
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-              color: primaryBlue,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
-  // SEARCH
-  // ============================================================
-
-  Widget _buildSearch() {
-    return Container(
-      height: 76,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0xFFB9C5D4),
-          width: 1.4,
-        ),
-      ),
-      child: Row(
-        children: [
-          const SizedBox(width: 20),
-
-          const Icon(
-            Icons.search_rounded,
-            size: 36,
-            color: Color(0xFF006A9E),
           ),
 
           const SizedBox(width: 14),
 
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Cari bantuan atau topik...',
-                hintStyle: GoogleFonts.poppins(
-                  fontSize: 17,
-                  color: greyText,
-                ),
-                border: InputBorder.none,
-              ),
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: darkText,
-              ),
+          Text(
+            'Pusat Bantuan',
+            style: GoogleFonts.poppins(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: primaryBlue,
             ),
           ),
-
-          const SizedBox(width: 15),
         ],
       ),
     );
@@ -196,115 +143,111 @@ class _BantuanScreenState extends State<BantuanScreen> {
   // ============================================================
 
   Widget _buildHelpBanner() {
-    return Container(
-      width: double.infinity,
-      height: 408,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0788BE),
-            Color(0xFF168CC2),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF0788BE),
+              Color(0xFF12A3C9),
+              Color(0xFF168CC2),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: primaryBlue.withValues(alpha: 0.28),
+              blurRadius: 18,
+              offset: const Offset(0, 10),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: 35,
-            top: 100,
-            child: Icon(
-              Icons.support_agent_rounded,
-              size: 115,
-              color: Colors.white.withValues(alpha: 0.20),
+        child: Stack(
+          children: [
+            // Gelombang dekoratif membentang penuh dari ujung ke ujung,
+            // dengan lengkung kiri & kanan yang berbeda bentuk.
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: CustomPaint(
+                size: const Size(double.infinity, 48),
+                painter: _WavePainter(),
+              ),
             ),
-          ),
 
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              28,
-              52,
-              25,
-              25,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Butuh Bantuan?',
-                  style: GoogleFonts.poppins(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                SizedBox(
-                  width: 250,
-                  child: Text(
-                    'Hubungi PPID Kabupaten '
-                    'Sragen untuk bantuan '
-                    'langsung.',
-                    style: GoogleFonts.poppins(
-                      fontSize: 17,
-                      height: 1.45,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 26),
-
-                GestureDetector(
-                  onTap: () {
-                    _showMessage('Hubungi PPID');
-                  },
-                  child: Container(
-                    height: 56,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF007E72),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Teks (tanpa tombol Hubungi PPID)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Hubungi PPID',
+                          'Butuh Bantuan?',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                           style: GoogleFonts.poppins(
-                            fontSize: 17,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
                         ),
 
-                        const SizedBox(width: 12),
+                        const SizedBox(height: 10),
 
-                        const Icon(
-                          Icons.arrow_forward_rounded,
-                          color: Colors.white,
-                          size: 25,
+                        Text(
+                          'Kami siap membantu Anda mendapatkan '
+                          'informasi dan solusi terbaik.',
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12.5,
+                            height: 1.45,
+                            color: Colors.white.withValues(alpha: 0.92),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(width: 10),
+
+                  // Logo/ilustrasi bantuan
+                  Image.asset(
+                    'assets/images/pusat_bantuan/logo_bantuan.png',
+                    width: 104,
+                    height: 104,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 90,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.22),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Icon(
+                          Icons.support_agent_rounded,
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -317,105 +260,134 @@ class _BantuanScreenState extends State<BantuanScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Hubungi Kami',
-          style: GoogleFonts.poppins(
-            fontSize: 23,
-            fontWeight: FontWeight.w600,
-            color: darkText,
-          ),
-        ),
-
-        const SizedBox(height: 20),
-
         Row(
           children: [
-            Expanded(
-              child: _buildContactCard(
-                icon: Icons.chat_bubble_outline_rounded,
-                title: 'WhatsApp',
-                iconColor: const Color(0xFF20C76A),
-                backgroundColor: const Color(0xFFE5F9ED),
+            Container(
+              width: 4,
+              height: 18,
+              decoration: BoxDecoration(
+                color: primaryBlue,
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
-
             const SizedBox(width: 10),
-
-            Expanded(
-              child: _buildContactCard(
-                icon: Icons.phone_outlined,
-                title: 'Call Center',
-                iconColor: const Color(0xFF0066B3),
-                backgroundColor: const Color(0xFFE8F0F8),
-              ),
-            ),
-
-            const SizedBox(width: 10),
-
-            Expanded(
-              child: _buildContactCard(
-                icon: Icons.email_outlined,
-                title: 'Email',
-                iconColor: const Color(0xFF5557A6),
-                backgroundColor: const Color(0xFFECECF7),
+            Text(
+              'Hubungi Kami',
+              style: GoogleFonts.poppins(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: darkText,
               ),
             ),
           ],
         ),
+
+        const SizedBox(height: 18),
+
+        _buildEmailCard(),
       ],
     );
   }
 
   // ============================================================
-  // CONTACT CARD
+  // EMAIL CARD (satu-satunya kontak)
   // ============================================================
 
-  Widget _buildContactCard({
-    required IconData icon,
-    required String title,
-    required Color iconColor,
-    required Color backgroundColor,
-  }) {
+  Widget _buildEmailCard() {
+    const String email = 'intipkominfo@gmail.com';
     return GestureDetector(
-      onTap: () {
-        _showMessage(title);
-      },
+      onTap: () => _openEmail(email),
       child: Container(
-        height: 180,
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: const Color(0xFFB9C5D4),
-            width: 1.2,
+            color: const Color(0xFFEAEFF5),
+            width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0788BE).withValues(alpha: 0.05),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
+            // Ikon email dengan lingkaran biru solid
             Container(
-              width: 65,
-              height: 65,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
-                color: backgroundColor,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF1093D6), Color(0xFF0A6CB4)],
+                ),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryBlue.withValues(alpha: 0.28),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-              child: Icon(
-                icon,
-                size: 32,
-                color: iconColor,
+              child: const Icon(
+                Icons.email_rounded,
+                size: 23,
+                color: Colors.white,
               ),
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(width: 14),
 
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: darkText,
+            // Label + alamat email
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Email',
+                    style: GoogleFonts.poppins(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w500,
+                      color: greyText,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    email,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: darkText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 10),
+
+            // Tombol panah bulat berlatar biru lembut
+            Container(
+              width: 38,
+              height: 38,
+              decoration: const BoxDecoration(
+                color: Color(0xFFE8F1FA),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.arrow_forward_rounded,
+                size: 19,
+                color: primaryBlue,
               ),
             ),
           ],
@@ -432,92 +404,142 @@ class _BantuanScreenState extends State<BantuanScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Tanya Jawab Umum',
-          style: GoogleFonts.poppins(
-            fontSize: 23,
-            fontWeight: FontWeight.w600,
-            color: darkText,
-          ),
+        Row(
+          children: [
+            Container(
+              width: 4,
+              height: 18,
+              decoration: BoxDecoration(
+                color: primaryBlue,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Tanya Jawab Umum',
+              style: GoogleFonts.poppins(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: darkText,
+              ),
+            ),
+          ],
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 18),
 
         ...List.generate(
           faqList.length,
           (index) {
             final faq = faqList[index];
-            final bool isExpanded =
-                expandedIndex == index;
+            final bool isExpanded = expandedIndex == index;
 
             return Padding(
-              padding: const EdgeInsets.only(
-                bottom: 12,
-              ),
+              padding: const EdgeInsets.only(bottom: 12),
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    if (expandedIndex == index) {
-                      expandedIndex = null;
-                    } else {
-                      expandedIndex = index;
-                    }
+                    expandedIndex = isExpanded ? null : index;
                   });
                 },
                 child: AnimatedContainer(
-                  duration: const Duration(
-                    milliseconds: 200,
-                  ),
+                  duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 20,
+                    horizontal: 16,
+                    vertical: 16,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                        BorderRadius.circular(17),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: const Color(0xFFB9C5D4),
-                      width: 1.2,
+                      color: isExpanded
+                          ? primaryBlue.withValues(alpha: 0.55)
+                          : const Color(0xFFE1E8F0),
+                      width: 1.3,
                     ),
+                    boxShadow: isExpanded
+                        ? [
+                            BoxShadow(
+                              color: primaryBlue.withValues(alpha: 0.10),
+                              blurRadius: 12,
+                              offset: const Offset(0, 5),
+                            ),
+                          ]
+                        : null,
                   ),
                   child: Column(
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Expanded(
+                          // Badge nomor
+                          Container(
+                            width: 30,
+                            height: 30,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: isExpanded
+                                  ? primaryBlue
+                                  : const Color(0xFFE8F0F8),
+                              borderRadius: BorderRadius.circular(9),
+                            ),
                             child: Text(
-                              faq['question']!,
+                              '${index + 1}',
                               style: GoogleFonts.poppins(
-                                fontSize: 15,
-                                color: darkText,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color:
+                                    isExpanded ? Colors.white : primaryBlue,
                               ),
                             ),
                           ),
 
-                          Icon(
-                            isExpanded
-                                ? Icons
-                                    .keyboard_arrow_up_rounded
-                                : Icons
-                                    .keyboard_arrow_down_rounded,
-                            size: 30,
-                            color: greyText,
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: Text(
+                              faq['question']!,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: darkText,
+                                height: 1.35,
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(width: 8),
+
+                          AnimatedRotation(
+                            turns: isExpanded ? 0.5 : 0,
+                            duration: const Duration(milliseconds: 200),
+                            child: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 26,
+                              color: isExpanded ? primaryBlue : greyText,
+                            ),
                           ),
                         ],
                       ),
 
                       if (isExpanded) ...[
                         const SizedBox(height: 14),
-
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            faq['answer']!,
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              height: 1.5,
-                              color: greyText,
+                        Container(
+                          height: 1,
+                          color: const Color(0xFFEEF2F6),
+                        ),
+                        const SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 42),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              faq['answer']!,
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                height: 1.55,
+                                color: greyText,
+                              ),
                             ),
                           ),
                         ),
@@ -539,60 +561,68 @@ class _BantuanScreenState extends State<BantuanScreen> {
 
   Widget _buildBottomNavigation() {
     return Container(
-      height: 86,
+      height: 95,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 15,
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 10,
             offset: const Offset(0, -3),
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(
-            icon: Icons.home_outlined,
-            activeIcon: Icons.home_rounded,
-            label: 'Beranda',
-            active: false,
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-
-          _buildNavItem(
-            icon: Icons.apps_outlined,
-            activeIcon: Icons.apps_rounded,
-            label: 'Layanan',
-            active: true,
-            onTap: () {
-              _showMessage('Layanan');
-            },
-          ),
-
-          _buildNavItem(
-            icon: Icons.calendar_month_outlined,
-            activeIcon: Icons.calendar_month_rounded,
-            label: 'Agenda',
-            active: false,
-            onTap: () {
-              _showMessage('Agenda');
-            },
-          ),
-        ],
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            Expanded(
+              child: _buildNavItem(
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home_rounded,
+                label: 'Beranda',
+                active: false,
+                onTap: () {
+                  Navigator.of(context).popUntil((r) => r.isFirst);
+                },
+              ),
+            ),
+            Expanded(
+              child: _buildNavItem(
+                icon: Icons.grid_view_rounded,
+                activeIcon: Icons.grid_view_rounded,
+                label: 'Layanan',
+                active: true,
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            Expanded(
+              child: _buildNavItem(
+                icon: Icons.calendar_month_outlined,
+                activeIcon: Icons.calendar_month_rounded,
+                label: 'Agenda',
+                active: false,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AgendaScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   // ============================================================
-  // NAV ITEM
+  // NAV ITEM (seragam dengan layanan lain)
   // ============================================================
 
   Widget _buildNavItem({
@@ -604,102 +634,122 @@ class _BantuanScreenState extends State<BantuanScreen> {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 105,
-        height: 58,
-        decoration: BoxDecoration(
-          color: active
-              ? const Color(0xFF55D9EE)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
-          children: [
-            Icon(
-              active ? activeIcon : icon,
-              size: 25,
-              color: active
-                  ? const Color(0xFF315278)
-                  : const Color(0xFF343C45),
-            ),
-
-            const SizedBox(height: 2),
-
-            Text(
-              label,
-              style: GoogleFonts.poppins(
-                fontSize: 11,
-                color: active
-                    ? const Color(0xFF315278)
-                    : const Color(0xFF343C45),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ============================================================
-  // MESSAGE
-  // ============================================================
-
-  void _showMessage(String title) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25),
-        ),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(25),
+      child: Center(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 95,
+          height: 52,
+          decoration: BoxDecoration(
+            color: active ? const Color(0xFF58D8EC) : Colors.transparent,
+            borderRadius: BorderRadius.circular(27),
+          ),
+          child: Transform.translate(
+            offset: const Offset(0, -1),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 45,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius:
-                        BorderRadius.circular(10),
-                  ),
+                Icon(
+                  active ? activeIcon : icon,
+                  size: 22,
+                  color: active
+                      ? const Color(0xFF315579)
+                      : const Color(0xFF374151),
                 ),
-
-                const SizedBox(height: 20),
-
+                const SizedBox(height: 1),
                 Text(
-                  title,
+                  label,
                   style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 9,
+                    fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                    color: active
+                        ? const Color(0xFF315579)
+                        : const Color(0xFF374151),
                   ),
                 ),
-
-                const SizedBox(height: 8),
-
-                Text(
-                  'Fitur ini akan tersedia pada '
-                  'tahap berikutnya.',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    color: greyText,
-                  ),
-                ),
-
-                const SizedBox(height: 20),
               ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+
+  // ============================================================
+  // BUKA EMAIL (mailto)
+  // ============================================================
+
+  Future<void> _openEmail(String email) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final Uri uri = Uri(
+      scheme: 'mailto',
+      path: email,
+      query: 'subject=${Uri.encodeComponent('Bantuan Aplikasi Sragen Smart')}',
+    );
+
+    final bool launched =
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+    if (!launched && messenger.mounted) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Tidak dapat membuka aplikasi email. Email: $email'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  // ============================================================
+  // GELOMBANG DEKORATIF UNTUK BANNER BANTUAN
+  // ============================================================
+}
+
+
+// ============================================================
+// GELOMBANG DEKORATIF UNTUK BANNER BANTUAN
+// Dua lapis gelombang putih transparan di bagian bawah banner.
+// ============================================================
+class _WavePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double w = size.width;
+    final double h = size.height;
+
+    // Lapisan gelombang belakang (lebih samar).
+    // Kiri mulai rendah lalu naik, kanan turun tajam -> bentuk asimetris.
+    final backPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.10)
+      ..style = PaintingStyle.fill;
+
+    final backPath = Path()
+      ..moveTo(0, h * 0.55)
+      // sisi kiri: lengkung landai naik
+      ..quadraticBezierTo(w * 0.20, h * 0.10, w * 0.42, h * 0.40)
+      // tengah ke kanan: lengkung lebih dalam & tajam
+      ..cubicTo(w * 0.60, h * 0.62, w * 0.80, h * 0.05, w, h * 0.42)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(backPath, backPaint);
+
+    // Lapisan gelombang depan (lebih terang).
+    // Bentuk kiri (bulat lembut) berbeda dengan kanan (tarikan tajam).
+    final frontPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.18)
+      ..style = PaintingStyle.fill;
+
+    final frontPath = Path()
+      ..moveTo(0, h * 0.78)
+      // sisi kiri: gundukan bulat
+      ..quadraticBezierTo(w * 0.18, h * 0.42, w * 0.40, h * 0.66)
+      // sisi kanan: turun-naik lebih tajam
+      ..cubicTo(w * 0.62, h * 0.92, w * 0.82, h * 0.30, w, h * 0.70)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(frontPath, frontPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

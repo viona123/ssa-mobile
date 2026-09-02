@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import '../bantuan/bantuan_screen.dart';
+import '../layanan/pariwisata/reservasi_screen.dart';
 
 class AgendaScreen extends StatefulWidget {
   final bool showBottomNav;
-  const AgendaScreen({super.key, this.showBottomNav = true});
+
+  /// Dipanggil saat tombol kembali (panah atas) ditekan.
+  ///
+  /// Diisi ketika AgendaScreen ditampilkan sebagai konten di dalam HomeScreen
+  /// (bukan route yang di-push), sehingga tombol kembali tidak mem-pop
+  /// HomeScreen dan menyebabkan layar hitam, melainkan kembali ke tab Beranda.
+  final VoidCallback? onBack;
+
+  const AgendaScreen({super.key, this.showBottomNav = true, this.onBack});
 
   @override
   State<AgendaScreen> createState() => _AgendaScreenState();
@@ -137,6 +146,24 @@ class _AgendaScreenState extends State<AgendaScreen> {
   // HEADER
   // ============================================================
 
+  // ============================================================
+  // HANDLE BACK (panah atas di header)
+  // ============================================================
+
+  void _handleBack() {
+    // Jika ditampilkan di dalam HomeScreen, kembali ke tab Beranda
+    // lewat callback agar tidak mem-pop HomeScreen (layar hitam).
+    if (widget.onBack != null) {
+      widget.onBack!();
+      return;
+    }
+
+    // Jika di-push sebagai route tersendiri, pop seperti biasa.
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+  }
+
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
@@ -159,9 +186,7 @@ class _AgendaScreenState extends State<AgendaScreen> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
+            onTap: _handleBack,
 
             child: const Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -266,7 +291,30 @@ class _AgendaScreenState extends State<AgendaScreen> {
         horizontal: 24,
       ),
 
-      child: _buildAgendaCard(),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _openSangiranDetail,
+        child: _buildAgendaCard(),
+      ),
+    );
+  }
+
+  // ============================================================
+  // BUKA DETAIL / DATA MUSEUM PURBAKALA SANGIRAN
+  // ============================================================
+
+  void _openSangiranDetail() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ReservasiScreen(
+          namaWisata: 'Museum Purbakala Sangiran',
+          lokasi: 'Kalijambe, Sragen',
+          deskripsi:
+              'Situs prasejarah warisan dunia UNESCO, menyimpan '
+              'koleksi fosil manusia purba...',
+        ),
+      ),
     );
   }
 
@@ -1058,7 +1106,7 @@ class _AgendaScreenState extends State<AgendaScreen> {
                 Icons.home_rounded,
                 'Beranda',
                 false,
-                () => Navigator.pop(context),
+                () => Navigator.popUntil(context, (route) => route.isFirst),
               ),
             ),
             Expanded(

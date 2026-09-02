@@ -111,35 +111,6 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
 
                   // ==========================
-                  // PROGRESS BAR
-                  // ==========================
-                  Positioned(
-                    bottom: height * 0.115,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Container(
-                        width: width * 0.36,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFD5E3E8),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            width: width * 0.16,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF006B92),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // ==========================
                   // PEMERINTAH KABUPATEN SRAGEN
                   // ==========================
                   Positioned(

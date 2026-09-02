@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../bantuan/bantuan_screen.dart';
 import 'mpp_shared.dart';
 import 'sistem_perizinan_screen.dart';
 import 'antrean_mpp_screen.dart';
@@ -78,29 +79,76 @@ class LayananMppScreen extends StatelessWidget {
       backgroundColor: MppColors.pageBackground,
       bottomNavigationBar: const MppBottomNav(),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            const MppHeader(title: 'Layanan MPP'),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const MppHero(),
-                    const SizedBox(height: 24),
-                    _buildSectionHeader(),
-                    const SizedBox(height: 14),
-                    ..._menus.map((m) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _buildMenuCard(context, m),
-                        )),
-                  ],
+            Column(
+              children: [
+                const MppHeader(title: 'Layanan MPP'),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const MppHero(),
+                        const SizedBox(height: 24),
+                        _buildSectionHeader(),
+                        const SizedBox(height: 14),
+                        ..._menus.map((m) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _buildMenuCard(context, m),
+                            )),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
+            ),
+
+            // Tombol Pusat Bantuan
+            Positioned(
+              right: 26,
+              bottom: 14,
+              child: _buildHelpButton(context),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // PUSAT BANTUAN
+  // ============================================================
+  Widget _buildHelpButton(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BantuanScreen()),
+        ),
+        child: Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            color: MppColors.primaryBlue,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.support_agent_rounded,
+            size: 27,
+            color: Colors.white,
+          ),
         ),
       ),
     );
